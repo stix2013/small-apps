@@ -31,6 +31,8 @@ const server = app.listen(port, () => {
   console.log(`        using NodeJS ${process.version}`)
 })
 
+export { app, server };
+
 process.on('SIGINT', () => {
   server.close((err?: Error) => {
     if (err) {
