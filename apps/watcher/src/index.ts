@@ -7,6 +7,7 @@ import schedule from 'node-schedule'
 import * as Prometheus from 'prom-client'
 
 import config from './config'
+import { loggers } from './utils/logger' // Import the loggers array
 import { createCDRWatcher } from './cdr'
 //
 import { createSchedule } from './monitoring'
@@ -40,21 +41,46 @@ process.on('SIGINT', () => {
     }
   })
 
-  // end logger
-  // loggers.forEach((logger) => {
-  //   logger.end()
-  // })
+  // Close all resources gracefully
+  const gracefulShutdownFlow = async () => {
+    console.log('Starting graceful shutdown...');
 
-  watcher?.close()
-    .then(() => {
-      console.log('Watcher is closed')
-      process.exit(0)
-    })
-    .catch((err: Error) => console.error(err.message))
+    // Close watcher
+    if (watcher) {
+      try {
+        await watcher.close();
+        console.log('Watcher is closed');
+      } catch (err) {
+        console.error(`Error closing watcher: ${(err as Error).message}`);
+      }
+    }
 
-  if (jobs) {
-    schedule.gracefulShutdown().then(() => {
-      console.log('Schedule is closed')
-    })
-  }
+    // Close scheduled jobs
+    if (jobs) { // Ensure jobs object exists
+      try {
+        await schedule.gracefulShutdown();
+        console.log('Schedule is closed');
+      } catch (err) {
+        console.error(`Error closing schedule: ${(err as Error).message}`);
+      }
+    }
+
+    // Close loggers
+    if (loggers && loggers.length > 0) {
+      loggers.forEach((logger) => {
+        if (logger && typeof logger.close === 'function') {
+          logger.close();
+        }
+      });
+      console.log('All global loggers closed.');
+    }
+
+    // Finally, exit the process
+    process.exit(0);
+  };
+
+  // Initiate graceful shutdown.
+  // Using a separate function helps manage the async flow and ensures
+  // process.exit is called only after all cleanup attempts.
+  gracefulShutdownFlow();
 })
