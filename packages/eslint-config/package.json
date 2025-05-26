@@ -1,0 +1,13 @@
+{
+  "name": "@yellow-mobile/eslint-config",
+  "version": "0.3.0",
+  "license": "ISC",
+  "main": "index.cjs",
+  "type": "commonjs",
+  "devDependencies": {
+    "eslint": "^8.57.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

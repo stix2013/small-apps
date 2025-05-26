@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.base.json",
+  "display": "watcher",
+  "compilerOptions": {
+    "lib": ["es2021"],
+    "target": "es2021",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["./src/*"]
+    },
+    "types": [
+      "@types/node",
+      "@types/express",
+      "@types/node-schedule",
+      "@types/uuid"
+    ]
+  },
+  "exclude": [
+    "node_modules", 
+    "**/*/dist"
+  ]
+}

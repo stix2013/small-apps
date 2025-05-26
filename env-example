@@ -1,0 +1,36 @@
+DOCKER_IMAGE_WEB_TAG="0.37.21"
+DOCKER_IMAGE_WEB="yellow-mobile/web"
+DOCKER_WEB_TARGET="web"
+
+DOCKER_IMAGE_IPX="yellow-mobile/images"
+DOCKER_IMAGE_IPX_TAG="0.2.3"
+DOCKER_IPX_TARGET="ipx"
+DOCKER_WEB_HOST="yellow.docker.localhost"
+
+TRAEFIK_PORTAL_PORT=80
+TRAEFIK_DASHBOARD_PORT=8080
+TRAEFIK_WEB_HOST="traefik.docker.localhost"
+
+NUXT_VERSION="2.17.2"
+TURBO_VERSION="1.11.3"
+PNPM_VERSION="8.15.1"
+NUXT_BUILD="prod"
+
+PREFIX_FILE="S4PGWB,S4PGWM,S4SVRO"
+RETRIEVE_ALL=false
+WATCHER_PATH='/home/stevan/mount/test'
+REDIS_HOST=localhost
+REDIS_PORT=5556
+WORKER_COUNT=2
+BASE_URL='http://localhost:8090/'
+PATH_WEBHOOK='api/cdr/webhook'
+EXPRESS_PORT=3600
+
+# logger
+LOG_TIME_FORMAT='YYYY-MM-DD HH:mm:ss'
+LOG_FILENAME_COMBINE='combine.log'
+LOG_FILENAME_INFO='test-info.log'
+LOG_FILENAME_ERROR='test-error.log'
+
+# yellow docker network
+DOCKER_NETWORK=backend_ym-network

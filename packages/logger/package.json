@@ -1,0 +1,34 @@
+{
+  "name": "@yellow-mobile/logger",
+  "description": "",
+  "version": "0.3.0",
+  "author": "",
+  "dependencies": {
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@yellow-mobile/eslint-config": "workspace:*",
+    "eslint": "^8.57.1",
+    "unbuild": "^2.0.0"
+  },
+  "peerDependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "license": "ISC",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "scripts": {
+    "build": "unbuild",
+    "lint": "eslint --cache --ext .js,.ts --ignore-path .eslintignore .",
+    "lint:fix": "eslint --cache --ext .js,.ts --ignore-path .eslintignore . --fix",
+    "prepack": "pnpm build"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "./dist/index.d.ts"
+}

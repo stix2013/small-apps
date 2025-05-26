@@ -1,0 +1,12 @@
+node_modules
+.nuxt
+.env
+.turbo
+dist
+staging
+*.db
+*.tgz
+.eslintcache
+.nx
+data
+.*.un~

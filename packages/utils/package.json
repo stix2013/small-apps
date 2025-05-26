@@ -1,0 +1,102 @@
+{
+  "name": "@yellow-mobile/utils",
+  "description": "",
+  "version": "0.3.0",
+  "author": "",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json",
+    "./colors": {
+      "import": {
+        "types": "./dist/colors/index.d.mts",
+        "default": "./dist/colors/index.mjs"
+      },
+      "require": {
+        "types": "./dist/colors/index.d.cts",
+        "default": "./dist/colors/index.cjs"
+      }
+    },
+    "./converters": {
+      "import": {
+        "types": "./dist/converters/index.d.mts",
+        "default": "./dist/converters/index.mjs"
+      },
+      "require": {
+        "types": "./dist/converters/index.d.cts",
+        "default": "./dist/converters/index.cjs"
+      }
+    },
+    "./const": {
+      "import": {
+        "types": "./dist/const/index.d.mts",
+        "default": "./dist/const/index.mjs"
+      },
+      "require": {
+        "types": "./dist/const/index.d.cts",
+        "default": "./dist/const/index.cjs"
+      }
+    },
+    "./coverage": {
+      "import": {
+        "types": "./dist/coverage/index.d.mts",
+        "default": "./dist/coverage/index.mjs"
+      },
+      "require": {
+        "types": "./dist/coverage/index.d.cts",
+        "default": "./dist/coverage/index.cjs"
+      }
+    },
+    "./dates": {
+      "import": {
+        "types": "./dist/dates/index.d.mts",
+        "default": "./dist/dates/index.mjs"
+      },
+      "require": {
+        "types": "./dist/dates/index.d.cts",
+        "default": "./dist/dates/index.cjs"
+      }
+    },
+    "./currency-symbols.json": "./src/currency-symbols.json"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "scripts"
+  ],
+  "scripts": {
+    "dev": "vitest dev",
+    "dev-stub": "unbuild --stub",
+    "lint": "eslint --cache --ext .ts,.js,.mjs,.cjs . ",
+    "lint:fix": "eslint --cache --ext .ts,.js,.mjs,.cjs . --fix",
+    "build": "unbuild",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "currency-symbol-map": "^5.1.0"
+  },
+  "peerDependencies": {
+    "consola": "^2.15.3"
+  },
+  "devDependencies": {
+    "@yellow-mobile/eslint-config": "workspace:*",
+    "@yellow-mobile/types": "workspace:*",
+    "eslint": "^8.57.1",
+    "unbuild": "^2.0.0",
+    "vitest": "^2.1.9"
+  }
+}

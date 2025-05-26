@@ -1,0 +1,19 @@
+{
+  "name": "@yellow-mobile/types",
+  "description": "",
+  "version": "0.4.0",
+  "author": "SH Moeladi",
+  "devDependencies": {
+    "@yellow-mobile/eslint-config": "workspace:*"
+  },
+  "keywords": [
+    "type definitions",
+    "yellow mobile apps type definitions"
+  ],
+  "license": "ISC",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "**/*.d.ts"
+  ]
+}

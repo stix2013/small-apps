@@ -1,0 +1,8 @@
+test
+node_modules
+.pnpm-store
+.nuxt
+dist
+staging
+prod
+.turbo
