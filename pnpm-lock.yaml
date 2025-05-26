@@ -278,6 +278,9 @@ importers:
       unbuild:
         specifier: ^2.0.0
         version: 2.0.0(typescript@5.8.3)
+      vitest:
+        specifier: ^2.1.9
+        version: 2.1.9(@types/node@20.17.50)(terser@4.8.1)
 
   packages/types:
     devDependencies:
