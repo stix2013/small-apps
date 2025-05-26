@@ -4,7 +4,7 @@ export interface BalanceNumber {
   msisdn: string | null
   balance: Amount
   lastFetching: number
-  error: any | null
+  error: string | object | null
 }
 
 export type BalanceNumbers = Record<string, BalanceNumber>

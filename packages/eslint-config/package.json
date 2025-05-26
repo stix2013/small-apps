@@ -4,9 +4,6 @@
   "license": "ISC",
   "main": "index.cjs",
   "type": "commonjs",
-  "devDependencies": {
-    "eslint": "^8.57.1"
-  },
   "publishConfig": {
     "access": "public"
   }

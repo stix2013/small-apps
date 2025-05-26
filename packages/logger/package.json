@@ -9,7 +9,6 @@
   },
   "devDependencies": {
     "@yellow-mobile/eslint-config": "workspace:*",
-    "eslint": "^8.57.1",
     "unbuild": "^2.0.0"
   },
   "peerDependencies": {

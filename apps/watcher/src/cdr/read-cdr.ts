@@ -19,7 +19,7 @@ export function readCdr (path: string) {
     })
 
     return result
-  } catch (err) {
+  } catch {
     throw new FileError(`Cannot read ${path}`)
   }
 }

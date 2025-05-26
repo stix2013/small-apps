@@ -33,6 +33,7 @@ export interface CoverageNetwork extends CountryCodeName {
 }
 
 export interface ChartCoverageReadyEvent {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   draw: Function
   continent: string
 }

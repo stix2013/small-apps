@@ -12,7 +12,6 @@ import { createCDRWatcher } from './cdr'
 //
 import { createSchedule } from './monitoring'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const jobs = createSchedule()
 
 // watch CDR files from FTP

@@ -14,15 +14,12 @@ const dataNew = dataOrigin.map(item => ({
   symbol: symbols[item.code]
 }))
 
-// eslint-disable-next-line no-console
 console.log('data new', dataNew)
 
 fs.writeFile('output.json', JSON.stringify(dataNew), 'utf8', (err) => {
   if (err) {
-    // eslint-disable-next-line no-console
     return console.error(err)
   }
 
-  // eslint-disable-next-line no-console
   console.log('file has been saved')
 })

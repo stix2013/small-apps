@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const exec = require('ssh-exec')
 
 const HOME = process.env.HOME || process.env.USERPROFILE
@@ -13,16 +12,6 @@ const config = {
 }
 
 console.log('Home', HOME)
-
-// exec(command, config, function (err, stdout, stderr) {
-//   if (err) {
-//     console.error('Error', err)
-//   } else if (stdout) {
-//     console.log(stdout)
-//   } else {
-//     console.log('Stderr', stderr)
-//   }
-// })
 
 exec(command, config)
   .pipe(process.stdout)
