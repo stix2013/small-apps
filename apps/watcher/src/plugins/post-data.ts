@@ -1,4 +1,5 @@
-import axios, { AxiosError } from 'axios'
+import type { AxiosError } from 'axios';
+import axios from 'axios'
 //
 import config from '@src/config'
 import { adminClient } from '@src/utils/admin-client'

@@ -10,7 +10,6 @@
   "devDependencies": {
     "@yellow-mobile/eslint-config": "workspace:*",
     "@yellow-mobile/types": "workspace:*",
-    "eslint": "^8.57.1",
     "prettier": "3.3.3",
     "unbuild": "^2.0.0",
     "vitest": "^2.1.9"

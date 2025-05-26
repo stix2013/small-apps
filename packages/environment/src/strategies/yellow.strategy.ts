@@ -1,4 +1,6 @@
-export default function ({ authUrl, apiPaths }: Record<string, any>) {
+import type { StrategyRecord } from "./types";
+
+export default function ({ authUrl, apiPaths }: StrategyRecord) {
   return {
     // export default {
     provider: 'laravel/sanctum',

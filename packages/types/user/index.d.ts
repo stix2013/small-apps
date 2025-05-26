@@ -13,6 +13,6 @@ export interface Auth {
   busy: boolean
   loggedIn: boolean
   strategy: string
-  redirect: any
+  redirect: ?string 
   user: User | null
 }

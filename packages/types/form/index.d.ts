@@ -1,7 +1,7 @@
 export interface ValidateItem {
-  dirty: boolean,
-  validated: boolean,
-  valid: any
+  dirty: boolean;
+  validated: boolean;
+  valid: boolean|string|number;
 }
 
 export interface Login {

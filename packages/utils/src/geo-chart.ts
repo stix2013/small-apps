@@ -1,5 +1,7 @@
 interface ConfigColors {
-  colors: any;
+  colors: { [key: string]: {
+    [key: string]: string
+  } };
 }
 
 export function getGeoChartOptions (config: ConfigColors) {

@@ -36,7 +36,7 @@ export interface MsisdnYellowProduct {
   msisdnVerifiedAt: string
   products: YellowProduct[]
   lastFetching: number
-  lastError: any | null
+  lastError: string | object | null
 }
 
 export type MsisdnYellowProductNumbers = Record<string, MsisdnYellowProduct>

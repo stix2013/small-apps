@@ -8,7 +8,7 @@ export default defineBuildConfig({
   rollup: {
     inlineDependencies: true,
     resolve: {
-      exportConditions: ['production', 'node'] as any
+      exportConditions: ['production', 'node']
     }
   },
   alias: {

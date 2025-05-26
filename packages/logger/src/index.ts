@@ -1,6 +1,7 @@
-import { loggers, format, transports, type Logger, addColors } from 'winston'
-import DailyRotateFile from 'winston-daily-rotate-file'
 import { config } from 'dotenv'
+import DailyRotateFile from 'winston-daily-rotate-file'
+import { type Logger, addColors, format, loggers, transports } from 'winston'
+
 //
 const { colorize, combine, label: formatLabel, printf: formatPrint, timestamp } = format
 

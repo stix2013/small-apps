@@ -1,4 +1,4 @@
-import { CoverageNetworkHeaders } from '@yellow-mobile/types/pages/coverage';
+import type { CoverageNetworkHeaders } from '@yellow-mobile/types/pages/coverage';
 
 export const tableHeaderNetwork: CoverageNetworkHeaders = {
   '01': {

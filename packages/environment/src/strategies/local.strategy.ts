@@ -1,4 +1,6 @@
-export default function ({ apiPaths }: Record<string, any>) {
+import type { StrategyRecord } from "./types";
+
+export default function ({ apiPaths }: StrategyRecord) {
   return {
     token: {
       property: 'access_token'

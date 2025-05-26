@@ -10,3 +10,4 @@ staging
 .nx
 data
 .*.un~
+node_modules
