@@ -95,7 +95,7 @@
   "devDependencies": {
     "@yellow-mobile/eslint-config": "workspace:*",
     "@yellow-mobile/types": "workspace:*",
-    "unbuild": "^2.0.0",
-    "vitest": "^2.1.9"
+    "unbuild": "^3.5.0",
+    "vitest": "3.1.4"
   }
 }

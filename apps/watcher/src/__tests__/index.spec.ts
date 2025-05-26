@@ -13,10 +13,20 @@ vi.mock('../cdr', () => ({
 
 vi.mock('node-schedule', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node-schedule')>();
+  const mockGracefulShutdownFn = vi.fn().mockResolvedValue(undefined);
+  const mockScheduleJobFn = vi.fn();
+
   return {
-    ...actual,
-    gracefulShutdown: vi.fn().mockResolvedValue(undefined),
-    scheduleJob: vi.fn(), // Also mock scheduleJob if it's called during init
+    ...actual, // Spread actual for any other parts of node-schedule used
+    // Provide named exports for completeness, though index.ts uses default.
+    gracefulShutdown: mockGracefulShutdownFn,
+    scheduleJob: mockScheduleJobFn,
+    // Crucially, mock the default export structure:
+    default: {
+      ...(actual.default || {}), // Spread actual.default if it exists and has other properties
+      gracefulShutdown: mockGracefulShutdownFn,
+      scheduleJob: mockScheduleJobFn,
+    },
   };
 });
 
@@ -111,7 +121,14 @@ describe('Graceful Shutdown on SIGINT', () => {
     
     // Re-apply mocks for logger and schedule as they might be cleared by vi.resetAllMocks()
     // and are used by the SIGINT handler in index.ts
-    vi.mocked(schedule.gracefulShutdown).mockResolvedValue(undefined);
+
+    // Now that the mock factory for 'node-schedule' correctly sets up
+    // schedule.gracefulShutdown as a vi.fn().mockResolvedValue(undefined),
+    // this explicit call in beforeEach might be redundant but should not error.
+    // If schedule.gracefulShutdown is indeed the mock function, this will work.
+    if (schedule && typeof schedule.gracefulShutdown === 'function') {
+        vi.mocked(schedule.gracefulShutdown).mockResolvedValue(undefined);
+    }
     // Ensure mockLoggersArrayInstance is correctly re-assigned if necessary, or that the mock for loggers is robust
     // The mock for '../utils/logger' is at the top level, so it should persist unless explicitly cleared.
     // If loggers array instance needs to be specifically controlled per test:

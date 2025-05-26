@@ -6,7 +6,8 @@
   "type": "module",
   "devDependencies": {
     "@yellow-mobile/eslint-config": "workspace:*",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "unbuild": "^3.5.0"
   },
   "keywords": [
     "type definitions",
