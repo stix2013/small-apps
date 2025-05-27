@@ -60,10 +60,14 @@ export const processFile = (path: string, stats: Stats) => {
   // const logger = log(`CDR ${file.name}`).logger
   const logger = logCdrFilename(file.name)
 
-  if (!data) {
-    logger.warn('File no info')
-    logger.end()
-    return
+  if (!data || data.length === 0) {
+    logger.warn('File no info');
+    cdrFile.status = 'EMPTY_CONTENT';      // Set the status
+    cdrFile.lineCount = 0;               // Ensure line counts are explicitly zero
+    cdrFile.lineInvalidCount = 0;
+    postData(cdrFile, []); // Call postData with the updated cdrFile and an empty lines array
+    logger.end();
+    return;
   }
 
   //
@@ -81,8 +85,8 @@ export const processFile = (path: string, stats: Stats) => {
     cdrFile.lineCount++
     if (cdrLine.valid) {
       lines.push(cdrLine)
-      totalDownload += cdrLine.volumeDownload
-      totalUpload += cdrLine.volumeUpload
+      totalDownload += (cdrLine.volumeDownload || 0);
+      totalUpload += (cdrLine.volumeUpload || 0);
       logger.info(`Line ${index + 1} msisdn: ${cdrLine.msisdn} ` +
         `down: ${cdrLine.volumeDownload} ` +
         `up:${cdrLine.volumeUpload} ` +
@@ -92,9 +96,9 @@ export const processFile = (path: string, stats: Stats) => {
 
       setVolumeDataMsisdnGauge(file, cdrLine)
     } else {
-      lines.push(cdrLine)
-      totalInvalidDownload += cdrLine.volumeDownload
-      totalInvalidUpload += cdrLine.volumeUpload
+      // lines.push(cdrLine); // <--- THIS LINE IS THE BUG, REMOVED
+      totalInvalidDownload += (cdrLine.volumeDownload || 0);
+      totalInvalidUpload += (cdrLine.volumeUpload || 0);
       logger.error(`Line ${index + 1} is invalid`)
       cdrFile.lineInvalidCount++
     }
