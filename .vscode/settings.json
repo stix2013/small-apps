@@ -27,9 +27,7 @@
     "pnpm-lock.yaml",
     "dist",
     ".nuxt",
-    ".husky",
-    ".turbo",
-    "pnpm-workspace.yaml"
+    ".husky"
   ],
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
