@@ -1,0 +1,65 @@
+{
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  "postcss.validate": false,
+  "stylelint.validate": [
+    "css",
+    "scss",
+    "postcss"
+  ],
+  "editor.tabSize": 2,
+  "stylelint.packageManager": "pnpm",
+  "stylelint.configFile": "stylelint.config.js",
+  "cSpell.language": "en,lorem",
+  "cSpell.enabledFileTypes": {
+    "json": false
+  },
+  "cSpell.ignorePaths": [
+    "package-lock.json",
+    "tsconfig.json",
+    "node_modules",
+    "vscode-extension",
+    ".git/objects",
+    ".vscode",
+    ".vscode-insiders",
+    "package.json",
+    "pnpm-lock.yaml",
+    "dist",
+    ".nuxt",
+    ".husky"
+  ],
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "$(capture).js, $(capture).*.ts, $(capture).*.tsx, $(capture).*.js, $(capture).*.jsx",
+    "*.js": "$(capture).js.map, $(capture).*.ts, $(capture).*.tsx, $(capture).*.js, $(capture).*.jsx",
+    "*.vue": "$(capture).js, , $(capture).*.ts, $(capture).*.tsx, $(capture).*.js, $(capture).*.jsx, $(capture).*.vue",
+    "tsconfig.json": "tsconfig.*.json",
+    "docker-compose.yml": "docker-compose.*.yml",
+    ".env": ".env.*, .env-*",
+    "nuxt.config.*": "nuxt-env.d.ts",
+    "package.json": "pnpm-workspace.yaml, package-lock.json, pnpm-lock.yaml, yarn.lock, .yarnrc",
+    ".npm": ".npmrc, .nvmrc",
+    "eslint": ".eslintrc.js, .eslintignore",
+    "modules.config.ts": "modules.config.ts, build-modules.config.ts"
+  },
+  "editor.fontVariations": false,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/.turbo": true,
+    "pnpm-lock.yaml": true,
+    "**/dist": true
+  },
+  "npm.packageManager": "pnpm",
+  "files.exclude": {
+    "**/.eslintcache": true,
+    "**/.turbo": true,
+    "**/dist":false
+  },
+  "files.watcherExclude": {
+    "**/.eslintcache": true,
+    "**/.turbo": true
+  }
+}
