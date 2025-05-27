@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "mikestead.dotenv",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "codezombiech.gitignore",
+    "bradlc.vscode-tailwindcss",
+    "heybourn.headwind",
+    "irongeek.vscode-env",
+    "Vue.volar",
+    "rangav.vscode-thunder-client",
+    "cweijan.vscode-database-client2",
+    "bierner.lit-html"
+  ]
+}
