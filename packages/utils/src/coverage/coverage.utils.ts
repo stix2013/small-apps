@@ -37,19 +37,23 @@ export const getCountryCoverageFilter = (id: string) => {
 
 export const filterData = <T extends WithFilter<unknown, string>, K>(
   list: T[],
-  filter: string,
+  filter: string | undefined, // Signature changed
 ): K[] => {
+  if (filter === undefined) { // Added check for undefined filter
+    return [] as K[];
+  }
   if (list && Array.isArray(list) && list.length > 0) {
-    return list.find(
+    const foundItem = list.find(
       (item: T) =>
-        (item.filter || '').toLowerCase() === (filter || '').toLowerCase(),
-    )?.data as K[];
+        (item.filter || '').toLowerCase() === (filter || '').toLowerCase(), // filter is now guaranteed not to be undefined here
+    );
+    return (foundItem?.data || []) as K[];
   }
   return [] as K[];
 };
 
-export const getCoverageBandCode = (band: string): number => {
-  const strBand = band.trim() || '';
+export const getCoverageBandCode = (band: string | null | undefined): number => {
+  const strBand = (band || '').trim();
   if (strBand === '') {
     return 0;
   }
@@ -57,19 +61,20 @@ export const getCoverageBandCode = (band: string): number => {
   return 1;
 };
 
-export const getCoverageInternetCode = (coverage: string): number => {
-  const strCoverage = coverage.trim() || '';
+export const getCoverageInternetCode = (coverage: string | null | undefined): number => {
+  const strCoverage = (coverage || '').trim();
+  if (strCoverage === '') {
+    return 0;
+  }
   const coverages = strCoverage.split(' ');
-  if (coverages.length > 0) {
-    const internet = coverages[0].toUpperCase();
+  const internet = coverages[0].toUpperCase();
 
-    if (internet === 'INTERNET') {
-      return 2;
-    }
+  if (internet === 'INTERNET') {
+    return 2;
+  }
 
-    if (internet === 'LOCAL') {
-      return 1;
-    }
+  if (internet === 'LOCAL') {
+    return 1;
   }
 
   return 0;

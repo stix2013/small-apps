@@ -48,9 +48,11 @@ export function darken (hex: string, intensity: number) {
   return rgbToHex(r, g, b)
 }
 
-export function generateColors (baseColor: string) {
+export function generateColors (baseColorInput: string) { // Renamed parameter for clarity
+  const normalizedBaseColor = `#${baseColorInput.replace(/^#+/, '')}`; // Ensure single # prefix or add if missing
+
   const colors = {
-    500: `#${baseColor}`.replace('##', '#')
+    500: normalizedBaseColor
   } as Record<number, string>
 
   const intensityMap = {
@@ -66,11 +68,11 @@ export function generateColors (baseColor: string) {
   } as Record<number, number>
 
   for (const level of [50, 100, 200, 300, 400]) {
-    colors[level] = lighten(baseColor, intensityMap[level])
+    colors[level] = lighten(normalizedBaseColor, intensityMap[level])
   }
 
   for (const level of [600, 700, 800, 900]) {
-    colors[level] = darken(baseColor, intensityMap[level])
+    colors[level] = darken(normalizedBaseColor, intensityMap[level])
   }
 
   return colors

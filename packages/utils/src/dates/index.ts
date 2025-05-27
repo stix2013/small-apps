@@ -10,14 +10,13 @@ export const getDateFromFormatted = (
 
   let timezone = '+00:00'
   if (timeOffset) {
-    const hh = Math.floor(timeOffset / 100)
-    const mm = timeOffset % 100
+    const absHh = Math.abs(Math.trunc(timeOffset / 100)); // Ensure hh is integer part
+    const absMm = Math.abs(timeOffset % 100);
+
     if (timeOffset >= 0) {
-      timezone = hh < 10 ? `+0${hh}:${mm}` : `+${hh}:${mm}`
-    } else if (hh > -10) {
-      timezone = `-0${hh}:${mm}`
-    } else {
-      timezone = `-${hh}:${mm}`
+      timezone = `+${absHh < 10 ? '0' : ''}${absHh}:${absMm < 10 ? '0' : ''}${absMm}`;
+    } else { // timeOffset is negative
+      timezone = `-${absHh < 10 ? '0' : ''}${absHh}:${absMm < 10 ? '0' : ''}${absMm}`;
     }
   }
 

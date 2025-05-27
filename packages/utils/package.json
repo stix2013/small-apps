@@ -29,6 +29,7 @@
   ],
   "scripts": {
     "dev": "vitest dev",
+    "test": "vitest run",
     "dev-stub": "unbuild --stub",
     "lint": "eslint --cache --ext .ts,.js,.mjs,.cjs . ",
     "lint:fix": "eslint --cache --ext .ts,.js,.mjs,.cjs . --fix",
