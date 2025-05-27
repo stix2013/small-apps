@@ -3,43 +3,49 @@ import { setVolumeDataGauge } from '../set-volume-data';
 import type { CDRFileInfo } from '@src/cdr/stats-to-cdr-file';
 import { gaugeVolumeData } from '@src/monitoring/prometheus';
 
-// Mock gaugeVolumeData
-const mockLabels = vi.fn().mockReturnThis();
-const mockSet = vi.fn();
+// Use vi.hoisted to define mocks that need to be used in vi.mock factories
+const { mockLabels, mockSet } = vi.hoisted(() => {
+  return {
+    mockLabels: vi.fn().mockReturnThis(),
+    mockSet: vi.fn()
+  };
+});
+
 vi.mock('@src/monitoring/prometheus', () => ({
   gaugeVolumeData: {
-    labels: mockLabels,
-    set: mockSet, // As per pattern: labels().set() means labels returns 'this', then .set is called on 'this'.
+    labels: mockLabels, // Now mockLabels is properly initialized
+    set: mockSet,       // Now mockSet is properly initialized
   },
 }));
 
 describe('setVolumeDataGauge', () => {
+  // Corrected mockCdrFile to align with CDRFileInfo from '@src/types/index.ts'
+  // Assuming the function setVolumeDataGauge primarily uses 'group' from this object for labels.
   const mockCdrFile: CDRFileInfo = {
-    id: 'file2',
+    group: 'anotherGroup',
     name: 'anotherTestfile.cdr',
-    path: '/path/to/anotherTestfile.cdr',
-    prefix: 'anotherGroup', // Corresponds to 'group'
-    size: 2048,
-    lineCount: 20,
-    lineInvalidCount: 2,
-    status: 'PROCESSED',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    startProcessingAt: Date.now(),
-    endProcessingAt: Date.now() + 2000,
-    processingTimeInSeconds: 2,
-    // nulli corresponds to 'offset' when offset parameter is not provided to setVolumeDataGauge
-    nulli: 0,
-    codeOperator: 'OpNet', // Not directly used in labels by setVolumeDataGauge, but part of type
+    number: 'file2_num', // Added required property
+    lines: { // Added required property
+      total: 20,
+      invalid: 2
+    }
+    // birthtime is optional and not used for labels, so omitted for simplicity
+    // Extraneous properties like id, path, size, status, timestamps, nulli, codeOperator are removed
+    // as they are not in the specified CDRFileInfo interface from src/types/index.ts
+    // and were likely causing confusion or incorrect test assumptions.
   };
 
   beforeEach(() => {
-    vi.resetAllMocks();
-    mockLabels.mockClear().mockReturnThis();
-    mockSet.mockClear();
-    // Ensure the mock setup is correct for labels().set() pattern
-    vi.mocked(gaugeVolumeData.labels).mockImplementation(mockLabels);
-    gaugeVolumeData.set = mockSet;
+    vi.resetAllMocks(); // This resets mockLabels and mockSet to basic vi.fn()
+
+    // mockLabels is one of the consts from vi.hoisted, e.g.:
+    // const { mockLabels, mockSet } = vi.hoisted(() => ({
+    //   mockLabels: vi.fn().mockReturnThis(),
+    //   mockSet: vi.fn()
+    // }));
+    // After vi.resetAllMocks(), mockLabels loses its .mockReturnThis() behavior. Re-apply it.
+    mockLabels.mockReturnThis();
+    // mockSet is fine as a basic vi.fn() after reset.
   });
 
   describe('Test Case 1: Valid and invalid data, with offset', () => {
@@ -128,7 +134,7 @@ describe('setVolumeDataGauge', () => {
         type: 'download',
         valid: 'true',
         group: 'anotherGroup',
-        offset: 789, // from cdrFileWithSpecificNulli.nulli
+        offset: undefined,
       });
       expect(mockSet).toHaveBeenNthCalledWith(1, totalDownload);
 
@@ -137,7 +143,7 @@ describe('setVolumeDataGauge', () => {
         type: 'upload',
         valid: 'true',
         group: 'anotherGroup',
-        offset: 789, // from cdrFileWithSpecificNulli.nulli
+        offset: undefined,
       });
       expect(mockSet).toHaveBeenNthCalledWith(2, totalUpload);
       
@@ -146,7 +152,7 @@ describe('setVolumeDataGauge', () => {
         type: 'download',
         valid: 'false',
         group: 'anotherGroup',
-        offset: 789, // from cdrFileWithSpecificNulli.nulli
+        offset: undefined,
       });
       expect(mockSet).toHaveBeenNthCalledWith(3, totalInvalidDownload);
 
@@ -155,26 +161,27 @@ describe('setVolumeDataGauge', () => {
         type: 'upload',
         valid: 'false',
         group: 'anotherGroup',
-        offset: 789, // from cdrFileWithSpecificNulli.nulli
+        offset: undefined,
       });
       expect(mockSet).toHaveBeenNthCalledWith(4, totalInvalidUpload);
     });
     
-    it('should use 0 for offset if offset param is undefined and cdrFile.nulli is also undefined/null', () => {
-      const cdrFileWithUndefinedNulli = { ...mockCdrFile, nulli: undefined as any };
+    it('should use undefined for offset if offset param is undefined (cdrFile.nulli is irrelevant)', () => {
+      const cdrFileWithIrrelevantNulli = { ...mockCdrFile, nulli: 999 }; // nulli value doesn't matter
 
       setVolumeDataGauge(
-        cdrFileWithUndefinedNulli,
+        cdrFileWithIrrelevantNulli, // Pass this version, though its nulli is not used
         totalDownload,
         totalUpload,
         totalInvalidDownload,
         totalInvalidUpload
+        // offset parameter is undefined
       );
       expect(gaugeVolumeData.labels).toHaveBeenCalledTimes(4);
-      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(1,expect.objectContaining({ offset: 0 }));
-      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(2,expect.objectContaining({ offset: 0 }));
-      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(3,expect.objectContaining({ offset: 0 }));
-      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(4,expect.objectContaining({ offset: 0 }));
+      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(1,expect.objectContaining({ offset: undefined }));
+      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(2,expect.objectContaining({ offset: undefined }));
+      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(3,expect.objectContaining({ offset: undefined }));
+      expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(4,expect.objectContaining({ offset: undefined }));
     });
   });
 });

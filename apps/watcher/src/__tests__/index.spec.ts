@@ -7,8 +7,24 @@ import schedule from 'node-schedule';
 import { loggers as mockLoggersArrayInstance } from '../utils/logger'; // To access the mocked loggers array
 
 // --- Mock Dependencies for Graceful Shutdown ---
+// Import to allow partial mocking if needed later
+vi.mock('../monitoring', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../monitoring')>();
+  return {
+    ...actual, // Spread actual to keep other exports
+    createSchedule: vi.fn().mockReturnValue(true), // Ensure jobs is truthy
+  };
+});
+
+// Use vi.hoisted for mockWatcherCloseGlobal
+const { mockWatcherCloseGlobal } = vi.hoisted(() => {
+  return { mockWatcherCloseGlobal: vi.fn() };
+});
+
 vi.mock('../cdr', () => ({
-  createCDRWatcher: vi.fn(),
+  // Ensure createCDRWatcher is a vi.fn() itself, and immediately returns an object
+  // that uses mockWatcherCloseGlobal for its 'close' method.
+  createCDRWatcher: vi.fn().mockReturnValue({ close: mockWatcherCloseGlobal }),
 }));
 
 vi.mock('node-schedule', async (importOriginal) => {
@@ -55,17 +71,21 @@ describe('Integration Test for /metrics endpoint', () => {
     // Close the server to prevent open handles
     await new Promise<void>((resolve, reject) => {
       if (server) {
-        server.close((err) => {
+        server.close((err?: Error & { code?: string }) => { // Add type for err.code
           if (err) {
-            // If server is already closed or other error
-            // console.error('Error closing server in test:', err.message);
-            // For tests, we might not want to fail if closing fails,
-            // especially if the server might have been closed by SIGINT handling logic in index.ts itself.
-            // However, for a clean test run, we expect it to close cleanly here.
-            // If specific errors on close are problematic, they may need to be handled.
-            return reject(err);
+            // If the server is already closed, Node.js might give an error with this code.
+            // For the purpose of this test's cleanup, we can ignore this specific error.
+            if (err.code === 'ERR_SERVER_NOT_RUNNING') {
+              console.warn(`Server was already closed or not running during metrics test cleanup: ${err.message}`);
+              resolve(); 
+            } else {
+              // For other errors, still reject.
+              console.error('Error closing server in metrics test cleanup:', err.message);
+              reject(err);
+            }
+          } else {
+            resolve();
           }
-          resolve();
         });
       } else {
         resolve(); // No server to close
@@ -98,73 +118,81 @@ describe('Integration Test for /metrics endpoint', () => {
 describe('Graceful Shutdown on SIGINT', () => {
   let mockProcessExit: vi.SpyInstance;
   let mockServerClose: vi.SpyInstance;
-  const mockWatcherClose = vi.fn().mockResolvedValue(undefined);
+  // const mockWatcherClose = vi.fn().mockResolvedValue(undefined); // Removed
 
   beforeEach(async () => {
-    // Reset all general mocks that might have been called by server startup or other tests
-    vi.resetAllMocks();
+    vi.resetAllMocks(); // Resets createCDRWatcher, mockWatcherCloseGlobal, schedule mocks, etc.
 
-    // Re-mock specific implementations for this test suite
-    vi.mocked(createCDRWatcher).mockReturnValue({ close: mockWatcherClose } as any);
+    // Re-establish default mock behaviors after reset:
+    // For mockWatcherCloseGlobal (used by the watcher returned by createCDRWatcher)
+    mockWatcherCloseGlobal.mockResolvedValue(undefined);
 
-    // Spy on process.exit before each test in this suite
-    mockProcessExit = vi.spyOn(process, 'exit').mockImplementation((() => { }) as (code?: number) => never);
+    // For createCDRWatcher itself (ensure it still returns the object with the now-reset-and-reconfigured mockWatcherCloseGlobal)
+    vi.mocked(createCDRWatcher).mockReturnValue({ close: mockWatcherCloseGlobal });
 
-    // Spy on server.close before each test in this suite
-    // Ensure `server` is the actual server instance from `../index`
-    mockServerClose = vi.spyOn(server, 'close').mockImplementation((callback?: (err?: Error) => void) => {
-      if (callback) {
-        callback();
-      }
-      return server; // Return the server instance as per the original signature
-    });
-    
-    // Re-apply mocks for logger and schedule as they might be cleared by vi.resetAllMocks()
-    // and are used by the SIGINT handler in index.ts
-
-    // Now that the mock factory for 'node-schedule' correctly sets up
-    // schedule.gracefulShutdown as a vi.fn().mockResolvedValue(undefined),
-    // this explicit call in beforeEach might be redundant but should not error.
-    // If schedule.gracefulShutdown is indeed the mock function, this will work.
+    // For schedule.gracefulShutdown (assuming 'schedule' is imported)
+    // The top-level mock for 'node-schedule' should have mockGracefulShutdownFn = vi.fn().mockResolvedValue(undefined)
+    // After resetAllMocks, this mock function needs its behavior re-applied.
     if (schedule && typeof schedule.gracefulShutdown === 'function') {
-        vi.mocked(schedule.gracefulShutdown).mockResolvedValue(undefined);
+      vi.mocked(schedule.gracefulShutdown).mockResolvedValue(undefined);
     }
-    // Ensure mockLoggersArrayInstance is correctly re-assigned if necessary, or that the mock for loggers is robust
-    // The mock for '../utils/logger' is at the top level, so it should persist unless explicitly cleared.
-    // If loggers array instance needs to be specifically controlled per test:
-    mockLoggersArrayInstance[0].close.mockClear();
-    if (mockLoggersArrayInstance[1]) mockLoggersArrayInstance[1].close.mockClear();
+    // If createSchedule is mocked (as in previous fix attempt), re-establish its behavior too.
+    // Assuming createSchedule is imported from '../monitoring' which is mocked at the top
+    const { createSchedule } = await import('../monitoring'); // dynamically import to get the mocked version
+    if (createSchedule && vi.isMockFunction(createSchedule)) {
+        vi.mocked(createSchedule).mockReturnValue(true);
+    }
 
+    // Re-initialize spies on process.exit and server.close as resetAllMocks might restore original implementations
+    mockProcessExit = vi.spyOn(process, 'exit').mockImplementation((() => {}) as (code?: number) => never);
+    mockServerClose = vi.spyOn(server, 'close').mockImplementation((callback?: (err?: Error) => void) => {
+      if (callback) callback();
+      return server;
+    });
 
+    // Clear logger mocks (ensure mockLoggersArrayInstance is the imported mock array)
+    if (mockLoggersArrayInstance && mockLoggersArrayInstance.length > 0) {
+      mockLoggersArrayInstance.forEach(logger => {
+        if (logger && typeof logger.close === 'function' && vi.isMockFunction(logger.close)) {
+          logger.close.mockClear(); // Only clear if it's a mock function
+        }
+      });
+    }
   });
 
   afterEach(() => {
-    // Restore spies after each test
+    // Restore original implementations spied on by vi.spyOn if not automatically handled by resetAllMocks
+    // For robust cleanup, explicitly restore spies created in beforeEach.
     mockProcessExit.mockRestore();
     mockServerClose.mockRestore();
-    mockWatcherClose.mockClear();
   });
 
   it('should perform graceful shutdown on SIGINT', async () => {
     // Emit SIGINT to trigger the graceful shutdown handler in index.ts
     process.emit('SIGINT');
 
-    // Add a small delay to allow asynchronous operations in the SIGINT handler to proceed
-    // This is important because the shutdown involves multiple async calls (watcher.close, schedule.gracefulShutdown)
-    // and process.exit is called at the end of an async flow.
-    await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay, adjust if needed
+    // Wait for the server to be signaled to close, and for async operations in gracefulShutdownFlow to be called.
+    // server.close() is called synchronously (in terms of starting the close) by the SIGINT handler.
+    // Then, watcher.close() and schedule.gracefulShutdown() are awaited within gracefulShutdownFlow.
+    
+    // Ensure server.close() was called (it's the first action in the SIGINT handler)
+    await vi.waitUntil(() => mockServerClose.mock.calls.length > 0, { timeout: 500, interval: 10 });
+
+    // Wait for the main async shutdown operations to be initiated and their mocks to be called
+    await vi.waitUntil(() => mockWatcherCloseGlobal.mock.calls.length > 0, { timeout: 1000, interval: 10 });
+    await vi.waitUntil(() => vi.mocked(schedule.gracefulShutdown).mock.calls.length > 0, { timeout: 1000, interval: 10 });
 
     // Assertions
-    expect(mockWatcherClose).toHaveBeenCalled();
-    expect(schedule.gracefulShutdown).toHaveBeenCalled();
+    expect(mockWatcherCloseGlobal).toHaveBeenCalledTimes(1);
+    expect(schedule.gracefulShutdown).toHaveBeenCalledTimes(1);
 
     // Check that each mocked logger's close method was called
     expect(mockLoggersArrayInstance.length).toBeGreaterThanOrEqual(1); // Ensure we have loggers to check
     for (const logger of mockLoggersArrayInstance) {
-      expect(logger.close).toHaveBeenCalled();
+      expect(logger.close).toHaveBeenCalledTimes(1);
     }
 
-    expect(mockServerClose).toHaveBeenCalled();
+    expect(mockServerClose).toHaveBeenCalledTimes(1);
     expect(mockProcessExit).toHaveBeenCalledWith(0);
   });
 });

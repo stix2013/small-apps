@@ -152,10 +152,14 @@ describe('processFile', () => {
     vi.mocked(histogramPostData.observe).mockReturnValue(undefined);
     vi.mocked(histogramProcess.labels).mockReturnThis();
     vi.mocked(histogramProcess.observe).mockReturnValue(undefined);
-    vi.mocked(setVolumeDataGauge.labels).mockReturnThis();
-    vi.mocked(setVolumeDataGauge.set).mockReturnValue(undefined);
-    vi.mocked(setVolumeDataMsisdnGauge.labels).mockReturnThis();
-    vi.mocked(setVolumeDataMsisdnGauge.set).mockReturnValue(undefined);
+
+    // setVolumeDataGauge and setVolumeDataMsisdnGauge are mocked as vi.fn() directly,
+    // not as objects with .labels and .set methods in this test file's mock factory.
+    // Thus, the following lines would cause errors and are removed.
+    // vi.mocked(setVolumeDataGauge.labels).mockReturnThis();
+    // vi.mocked(setVolumeDataGauge.set).mockReturnValue(undefined);
+    // vi.mocked(setVolumeDataMsisdnGauge.labels).mockReturnThis();
+    // vi.mocked(setVolumeDataMsisdnGauge.set).mockReturnValue(undefined);
   });
 
   afterEach(() => {

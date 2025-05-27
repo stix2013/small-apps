@@ -4,102 +4,89 @@ import type { CDRLine } from '@src/cdr/convert-to-cdr-fields';
 import type { CDRFileInfo } from '@src/cdr/stats-to-cdr-file';
 import { gaugeMsisdnVolumeData } from '@src/monitoring/prometheus/cdr';
 
-// Mock gaugeMsisdnVolumeData
-const mockLabels = vi.fn().mockReturnThis();
-const mockSet = vi.fn();
+// Use vi.hoisted to define mocks that need to be used in vi.mock factories
+const { mockLabels, mockSet } = vi.hoisted(() => {
+  return {
+    mockLabels: vi.fn().mockReturnThis(),
+    mockSet: vi.fn()
+  };
+});
+
 vi.mock('@src/monitoring/prometheus/cdr', () => ({
   gaugeMsisdnVolumeData: {
-    labels: mockLabels,
-    set: mockSet, // This is not directly used in the function, labels().set() is
+    labels: mockLabels, // Now mockLabels is properly initialized
+    set: mockSet,       // Now mockSet is properly initialized
   },
 }));
 
 describe('setVolumeDataMsisdnGauge', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
-    // Ensure the mock implementation is fresh for labels().set()
-    mockLabels.mockClear().mockReturnThis(); // mockReturnThis is important
-    // gaugeMsisdnVolumeData.labels itself returns an object with 'set', so we ensure 'set' is also fresh.
-    // However, because mockLabels returns 'this' (the gaugeMsisdnVolumeData mock itself),
-    // we need to ensure the 'set' method on the main mock object is the one being tracked if not mocking deeper.
-    // Let's adjust the mock slightly for clarity if labels().set() is the pattern.
-    // The initial mock structure implies gaugeMsisdnVolumeData.labels().set()
-    // So, gaugeMsisdnVolumeData.labels returns an object (mockReturnThis = the main mock) that has a .set method.
-    // So we re-assign gaugeMsisdnVolumeData.set to a new vi.fn() if that was the intent.
-    // Or, if gaugeMsisdnVolumeData.labels returns a *different* object that has .set, that's more complex.
-    // Given `labels = vi.fn().mockReturnThis()`, it means `gaugeMsisdnVolumeData.labels()` returns `gaugeMsisdnVolumeData`.
-    // So `gaugeMsisdnVolumeData.labels().set()` is actually `gaugeMsisdnVolumeData.set()`.
-    // Therefore, we just need to reset `mockSet`.
-    mockSet.mockClear();
-     // Re-assign the mock implementation for labels to return 'this' which has the 'set' method
-    vi.mocked(gaugeMsisdnVolumeData.labels).mockImplementation(mockLabels);
-    // And ensure the 'set' method on the main object is the one we are tracking
-    gaugeMsisdnVolumeData.set = mockSet;
+    vi.resetAllMocks(); // This resets mockLabels and mockSet to basic vi.fn()
 
-
+    // mockLabels is one of the consts from vi.hoisted, e.g.:
+    // const { mockLabels, mockSet } = vi.hoisted(() => ({
+    //   mockLabels: vi.fn().mockReturnThis(),
+    //   mockSet: vi.fn()
+    // }));
+    // After vi.resetAllMocks(), mockLabels loses its .mockReturnThis() behavior. Re-apply it.
+    mockLabels.mockReturnThis();
+    // mockSet is fine as a basic vi.fn() after reset.
   });
 
   it('should correctly set gauges for valid CDR data', () => {
+    // Corrected mockCdrFile to align with CDRFileInfo from '@src/types/index.ts'
     const mockCdrFile: CDRFileInfo = {
-      id: 'file1',
+      group: 'testGroup',
       name: 'testfile.cdr',
-      path: '/path/to/testfile.cdr',
-      prefix: 'testGroup', // Corresponds to 'group' in labels
-      size: 1024,
-      lineCount: 10,
-      lineInvalidCount: 0,
-      status: 'PROCESSED',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      startProcessingAt: Date.now(),
-      endProcessingAt: Date.now() + 1000,
-      processingTimeInSeconds: 1,
-      // These are not directly used by setVolumeDataMsisdnGauge but are part of the type
-      codeOperator: 'TestNet', // Corresponds to 'network'
-      nulli: 0, // Corresponds to 'offset'
+      number: 'file1_num', // Added required property
+      lines: { // Added required property
+        total: 10,
+        invalid: 0
+      }
     };
 
+    // Enhanced mockCdrLine to include properties used for labels
     const mockCdrLine: CDRLine = {
       id: 'line1',
       recordType: 'voice',
       timestamp: new Date(),
       eventDuration: 60,
-      subscriberIdA: '12345', // Corresponds to 'msisdn'
+      msisdn: '12345', // Explicitly using 'msisdn'
+      subscriberIdA: '12345', // Keep for other potential uses or if type expects it
       valid: true,
       volumeDownload: 100,
       volumeUpload: 50,
-      // Other fields are not directly used by this function but are part of the type
-      amountPrerated: 0.1,
-      eventResult: 'SUCCESS',
-      locationSubscriberA: 'locA',
+      amountPrerated: 0.1, // Not directly used in these labels, but good for completeness
+      eventResult: 'SUCCESS', // Not used in these labels
+      locationSubscriberA: 'locA', // Not used in these labels
+      codeOperator: 'TestNet', // Used for 'network' label
+      nulli: 0, // Used for 'offset' label
     };
 
     setVolumeDataMsisdnGauge(mockCdrFile, mockCdrLine);
 
     expect(gaugeMsisdnVolumeData.labels).toHaveBeenCalledTimes(2);
-    // gaugeMsisdnVolumeData.set is called after each labels call because labels returns 'this'
     expect(mockSet).toHaveBeenCalledTimes(2);
-
 
     // First call for download
     expect(gaugeMsisdnVolumeData.labels).toHaveBeenNthCalledWith(1, {
       type: 'download',
-      group: 'testGroup',
-      valid: 'true',
-      msisdn: '12345',
-      offset: 0,
-      network: 'TestNet',
+      group: 'testGroup', // From mockCdrFile.group
+      valid: 'true',      // Hardcoded in function
+      msisdn: '12345',    // From mockCdrLine.msisdn
+      offset: 0,          // From mockCdrLine.nulli
+      network: 'TestNet', // From mockCdrLine.codeOperator
     });
     expect(mockSet).toHaveBeenNthCalledWith(1, 100);
 
     // Second call for upload
     expect(gaugeMsisdnVolumeData.labels).toHaveBeenNthCalledWith(2, {
       type: 'upload',
-      group: 'testGroup',
-      valid: 'true',
-      msisdn: '12345',
-      offset: 0,
-      network: 'TestNet',
+      group: 'testGroup', // From mockCdrFile.group
+      valid: 'true',      // Hardcoded in function
+      msisdn: '12345',    // From mockCdrLine.msisdn
+      offset: 0,          // From mockCdrLine.nulli
+      network: 'TestNet', // From mockCdrLine.codeOperator
     });
     expect(mockSet).toHaveBeenNthCalledWith(2, 50);
   });
