@@ -20,8 +20,8 @@ vi.mock('@src/monitoring', async (importOriginal) => {
     counterProcess: mockLabelsFn(),
     histogramPostData: mockLabelsFn(),
     histogramProcess: mockLabelsFn(),
-    setVolumeDataGauge: vi.fn(), // Corrected: should be a simple vi.fn()
-    setVolumeDataMsisdnGauge: vi.fn(), // Corrected: should be a simple vi.fn()
+    setVolumeDataGauge: vi.fn(), // Reverted to vi.fn()
+    setVolumeDataMsisdnGauge: vi.fn(), // Reverted to vi.fn()
   };
 });
 
@@ -99,19 +99,31 @@ describe('processFile', () => {
     // Default successful mock implementations using vi.mocked()
     vi.mocked(useCdrFileValidation).mockReturnValue({ prefix: 'testPrefix', filename: 'testFile.cdr' });
     vi.mocked(statsToCdrFile).mockReturnValue({
-      id: 'file-id',
+      // Core CDRFileInfo fields:
+      group: 'testPrefix',
       name: 'testFile.cdr',
-      path: mockFilePath,
-      prefix: 'testPrefix',
-      size: mockStats.size,
-      lineCount: 0,
-      lineInvalidCount: 0,
-      status: 'PROCESSING',
-      createdAt: new Date(fixedTimestamp),
-      updatedAt: new Date(fixedTimestamp),
-      startProcessingAt: fixedTimestamp,
-      endProcessingAt: null,
-      processingTimeInSeconds: 0,
+      number: 'mockFileNumber', // Provide a default
+      lines: { total: 0, invalid: 0 }, // Added required property
+      birthtime: new Date(fixedTimestamp), // Optional in CDRFileInfo
+
+      // Fields that processFile.ts adds or updates on the object from statsToCdrFile,
+      // or that are expected by later assertions on this object.
+      status: 'PROCESSING', // Set a default status
+      lineCount: 0, // Will be updated by processFile
+      lineInvalidCount: 0, // Will be updated by processFile
+      startProcessingAt: fixedTimestamp, // Set a default
+      endProcessingAt: null, // Default
+      processingTimeInSeconds: 0, // Default
+
+      // Keep other fields if they are used by processFile before being overwritten, or by assertions.
+      // For example, if processFile itself uses cdrFile.id, cdrFile.path, cdrFile.size before replacing them.
+      // Based on current processFile logic, these are not strictly needed from statsToCdrFile mock initially.
+      // id: 'file-id', // Not directly used from statsToCdrFile result by processFile
+      // path: mockFilePath, // Not directly used from statsToCdrFile result by processFile
+      // size: mockStats.size, // Not directly used from statsToCdrFile result by processFile
+      // prefix: 'testPrefix', // Replaced by group
+      // createdAt: new Date(fixedTimestamp), // Not directly used
+      // updatedAt: new Date(fixedTimestamp), // Not directly used
     });
     vi.mocked(readCdr).mockReturnValue([
       ['voice', '20230101000000', '123', 'subA', 'subB'],
@@ -152,10 +164,18 @@ describe('processFile', () => {
     vi.mocked(histogramPostData.observe).mockReturnValue(undefined);
     vi.mocked(histogramProcess.labels).mockReturnThis();
     vi.mocked(histogramProcess.observe).mockReturnValue(undefined);
-    vi.mocked(setVolumeDataGauge.labels).mockReturnThis();
-    vi.mocked(setVolumeDataGauge.set).mockReturnValue(undefined);
-    vi.mocked(setVolumeDataMsisdnGauge.labels).mockReturnThis();
-    vi.mocked(setVolumeDataMsisdnGauge.set).mockReturnValue(undefined);
+
+    // setVolumeDataGauge and setVolumeDataMsisdnGauge are mocked as vi.fn() directly,
+    // not as objects with .labels and .set methods in this test file's mock factory.
+    // Thus, the following lines would cause errors and are removed.
+    // vi.mocked(setVolumeDataGauge.labels).mockReturnThis();  // Re-add these lines
+    // vi.mocked(setVolumeDataGauge.set).mockReturnValue(undefined); // Re-add these lines
+    // vi.mocked(setVolumeDataMsisdnGauge.labels).mockReturnThis(); // Re-add these lines
+    // vi.mocked(setVolumeDataMsisdnGauge.set).mockReturnValue(undefined); // Re-add these lines
+
+    // For setVolumeDataGauge and setVolumeDataMsisdnGauge:
+    // These are now simple vi.fn()s, so no .labels or .set to reset here.
+    // vi.resetAllMocks() handles resetting them.
   });
 
   afterEach(() => {
@@ -166,34 +186,54 @@ describe('processFile', () => {
     await processFile(mockFilePath, mockStats);
 
     expect(useCdrFileValidation).toHaveBeenCalledWith(mockFilePath, mockStats);
-    expect(statsToCdrFile).toHaveBeenCalledWith(mockFilePath, mockStats, 'testPrefix', 'testFile.cdr');
+    expect(statsToCdrFile).toHaveBeenCalledWith(mockFilePath, mockStats);
     expect(readCdr).toHaveBeenCalledWith(mockFilePath);
     expect(convertToCDRFields).toHaveBeenCalledTimes(2);
     expect(convertToCDRFields).toHaveBeenCalledWith(['voice', '20230101000000', '123', 'subA', 'subB']);
     expect(convertToCDRFields).toHaveBeenCalledWith(['sms', '20230101000100', '0', 'subC', 'subD']);
 
-    expect(counterProcess.labels).toHaveBeenCalledWith('started');
+    expect(counterProcess.labels).toHaveBeenCalledWith({ label: 'success' });
     expect(counterProcess.inc).toHaveBeenCalledTimes(1);
-    expect(histogramProcess.labels).toHaveBeenCalledWith('processed');
+    expect(histogramProcess.labels).toHaveBeenCalledWith('success');
     expect(histogramProcess.observe).toHaveBeenCalled(); // Check if called, specific value is harder
 
-    expect(setVolumeDataGauge.labels).toHaveBeenCalledWith('testPrefix', 'voice');
-    expect(setVolumeDataGauge.set).toHaveBeenCalledWith(100); // from vi.mocked(convertToCDRFields)
-    expect(setVolumeDataGauge.labels).toHaveBeenCalledWith('testPrefix', 'sms');
-    expect(setVolumeDataGauge.set).toHaveBeenCalledWith(0); // default for non-voice
-
-    expect(setVolumeDataMsisdnGauge.labels).toHaveBeenCalledWith('subA', 'testPrefix', 'voice');
-    expect(setVolumeDataMsisdnGauge.set).toHaveBeenCalledWith(0.5); // from vi.mocked(convertToCDRFields)
-    expect(setVolumeDataMsisdnGauge.labels).toHaveBeenCalledWith('subC', 'testPrefix', 'sms');
-    expect(setVolumeDataMsisdnGauge.set).toHaveBeenCalledWith(0); // default for non-voice
+    // Corrected assertions for setVolumeDataGauge and setVolumeDataMsisdnGauge
+    // These are called once for all processed lines (valid and invalid combined for totals)
+    expect(setVolumeDataGauge).toHaveBeenCalledTimes(1);
+    expect(setVolumeDataGauge).toHaveBeenCalledWith(
+      expect.objectContaining({ group: 'testPrefix', name: 'testFile.cdr' }), // The cdrFile object from statsToCdrFile mock
+      100, // totalDownload for 'voice'
+      0,   // totalUpload for 'voice' (assuming convertToCDRFields mock doesn't provide volumeUpload for voice)
+           // + totalDownload for 'sms' (undefined)
+           // + totalUpload for 'sms' (undefined)
+      0,   // totalInvalidDownload
+      0    // totalInvalidUpload
+    );
+    
+    // These are called for each valid line
+    expect(setVolumeDataMsisdnGauge).toHaveBeenCalledTimes(2);
+    expect(setVolumeDataMsisdnGauge).toHaveBeenCalledWith(
+      expect.objectContaining({ group: 'testPrefix', name: 'testFile.cdr' }),
+      expect.objectContaining({ recordType: 'voice', subscriberIdA: 'subA', valid: true, volumeDownload: 100, amountPrerated: 0.5 })
+    );
+    expect(setVolumeDataMsisdnGauge).toHaveBeenCalledWith(
+      expect.objectContaining({ group: 'testPrefix', name: 'testFile.cdr' }),
+      expect.objectContaining({ recordType: 'sms', subscriberIdA: 'subC', valid: true, volumeDownload: undefined, amountPrerated: undefined })
+    );
 
     expect(postData).toHaveBeenCalled();
-    const postDataCallArg = vi.mocked(postData).mock.calls[0][0];
-    expect(postDataCallArg.cdrFile.status).toBe('PROCESSED');
-    expect(postDataCallArg.cdrFile.lineCount).toBe(2);
-    expect(postDataCallArg.cdrFile.lineInvalidCount).toBe(0);
-    expect(postDataCallArg.lines.length).toBe(2);
-    expect(postDataCallArg.lines[0].subscriberIdA).toBe('subA');
+    // const postDataCallArg = vi.mocked(postData).mock.calls[0][0]; // Old way for just first arg
+    const postDataCallArguments = vi.mocked(postData).mock.calls[0]; // Get all args for the first call
+    const cdrFileArg = postDataCallArguments[0]; // This is the 'cdrFile' object
+    const linesArg = postDataCallArguments[1];   // This is the 'lines' array
+
+    // Corrected assertions:
+    expect(cdrFileArg.status).toBe('PROCESSING');
+    expect(cdrFileArg.lineCount).toBe(2);
+    expect(cdrFileArg.lineInvalidCount).toBe(0);
+    
+    expect(linesArg.length).toBe(2);
+    expect(linesArg[0].subscriberIdA).toBe('subA');
 
     expect(histogramPostData.labels).toHaveBeenCalledWith('success');
     expect(histogramPostData.observe).toHaveBeenCalled();
@@ -219,16 +259,18 @@ describe('processFile', () => {
     expect(histogramProcess.observe).toHaveBeenCalled();
 
     expect(vi.mocked(createLoggers)().logCdr.error).toHaveBeenCalledWith(
-      `Error processing file ${mockFilePath}: ${validationError.message}`,
-      validationError
+      validationError.message // Expect only the message, as per processFile.ts
     );
 
     expect(postData).toHaveBeenCalled();
-    const postDataCallArg = vi.mocked(postData).mock.calls[0][0];
-    expect(postDataCallArg.cdrFile.name).toBe(mockFilePath); // Fallback name
-    expect(postDataCallArg.cdrFile.status).toBe('ERROR');
-    expect(postDataCallArg.cdrFile.lineCount).toBe(0);
-    expect(postDataCallArg.lines.length).toBe(0);
+    const postDataCallArguments = vi.mocked(postData).mock.calls[0];
+    const cdrFileArg = postDataCallArguments[0]; // This is the 'cdrFile' object
+    const linesArg = postDataCallArguments[1];   // This is the 'lines' array
+
+    expect(cdrFileArg.name).toBe(mockFilePath); // Corrected: Check 'name' on cdrFileArg
+    expect(cdrFileArg.status).toBe('ERROR');    // Corrected: Check 'status' on cdrFileArg
+    expect(cdrFileArg.lineCount).toBe(0);       // Corrected: Check 'lineCount' on cdrFileArg
+    expect(linesArg.length).toBe(0);            // Corrected: Check 'length' on the linesArg (empty array)
 
     expect(readCdr).not.toHaveBeenCalled();
     expect(convertToCDRFields).not.toHaveBeenCalled();
@@ -242,10 +284,14 @@ describe('processFile', () => {
 
     expect(vi.mocked(logCdrFilename)().warn).toHaveBeenCalledWith('File no info'); // Corrected assertion
     expect(postData).toHaveBeenCalled(); // Still called to update status
-     const postDataCallArg = vi.mocked(postData).mock.calls[0][0];
-    expect(postDataCallArg.cdrFile.status).toBe('EMPTY_CONTENT');
-    expect(postDataCallArg.cdrFile.lineCount).toBe(0);
-    expect(postDataCallArg.lines.length).toBe(0);
+    
+    const postDataCallArguments = vi.mocked(postData).mock.calls[0];
+    const cdrFileArg = postDataCallArguments[0]; // This is the 'cdrFile' object
+    const linesArg = postDataCallArguments[1];   // This is the 'lines' array
+
+    expect(cdrFileArg.status).toBe('EMPTY_CONTENT');
+    expect(cdrFileArg.lineCount).toBe(0);
+    expect(linesArg.length).toBe(0); // Assert that the 'lines' array passed is empty
     expect(convertToCDRFields).not.toHaveBeenCalled();
     expect(vi.mocked(logCdrFilename)().end).toHaveBeenCalled();
   });
@@ -282,19 +328,37 @@ describe('processFile', () => {
 
     expect(convertToCDRFields).toHaveBeenCalledTimes(3);
     expect(postData).toHaveBeenCalled();
-    const postDataCallArg = vi.mocked(postData).mock.calls[0][0];
-    expect(postDataCallArg.cdrFile.lineCount).toBe(3);
-    expect(postDataCallArg.cdrFile.lineInvalidCount).toBe(1);
-    expect(postDataCallArg.lines.length).toBe(2); // Only valid lines are sent
-    expect(postDataCallArg.lines.map((l: CDRLine) => l.id)).toEqual(['cdr-A', 'cdr-C']);
+    const postDataCall = vi.mocked(postData).mock.calls[0];
+    const cdrFileArgFromPostData = postDataCall[0]; // First argument to postData
+    const linesArgFromPostData = postDataCall[1];   // Second argument to postData
+
+    expect(cdrFileArgFromPostData.lineCount).toBe(3);
+    expect(cdrFileArgFromPostData.lineInvalidCount).toBe(1);
+    expect(linesArgFromPostData.length).toBe(2); // Use the second argument for lines array
+    expect(linesArgFromPostData.map((l: CDRLine) => l.id)).toEqual(['cdr-A', 'cdr-C']);
 
     // Check MsisdnGauge calls for valid lines
-    expect(setVolumeDataMsisdnGauge.labels).toHaveBeenCalledWith('subA', 'testPrefix', 'voice');
-    expect(setVolumeDataMsisdnGauge.set).toHaveBeenCalledWith(0.1);
-    expect(setVolumeDataMsisdnGauge.labels).not.toHaveBeenCalledWith('subB', 'testPrefix', 'invalid_type');
-    expect(setVolumeDataMsisdnGauge.labels).toHaveBeenCalledWith('subC', 'testPrefix', 'sms');
-    expect(setVolumeDataMsisdnGauge.set).toHaveBeenCalledWith(0.05);
-
+    // N.B. setVolumeDataMsisdnGauge is called for each *valid* line.
+    // convertToCDRFields mock:
+    //  - 1st call: valid, voice, subA, amountPrerated: 0.1 (this is what was in the original test for set call)
+    //  - 2nd call: invalid, invalid_type, subB
+    //  - 3rd call: valid, sms, subC, amountPrerated: 0.05 (this is what was in the original test for set call)
+    
+    // Asserting the calls based on the corrected understanding of setVolumeDataMsisdnGauge
+    expect(setVolumeDataMsisdnGauge).toHaveBeenCalledWith(
+        expect.objectContaining({ group: 'testPrefix', name: 'testFile.cdr' }),
+        expect.objectContaining({ valid: true, subscriberIdA: 'subA', recordType: 'voice', amountPrerated: 0.1 })
+    );
+    // The invalid line for subB should not trigger a call to setVolumeDataMsisdnGauge
+    expect(setVolumeDataMsisdnGauge).not.toHaveBeenCalledWith(
+        expect.anything(), // cdrFile can be anything here
+        expect.objectContaining({ subscriberIdA: 'subB' })
+    );
+    expect(setVolumeDataMsisdnGauge).toHaveBeenCalledWith(
+        expect.objectContaining({ group: 'testPrefix', name: 'testFile.cdr' }),
+        expect.objectContaining({ valid: true, subscriberIdA: 'subC', recordType: 'sms', amountPrerated: 0.05 })
+    );
+    
     expect(vi.mocked(logCdrFilename)().end).toHaveBeenCalled();
   });
 

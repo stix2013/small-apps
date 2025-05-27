@@ -12,12 +12,14 @@ export function convertToCDRFields (line: string[]): CDRLine {
 
   errors = null
 
-  const timeOffset = +line[13] || undefined
+  const timeOffset = +line[13] || 0
 
   try {
     result.recordType = validateCdrType(line[0])
   } catch (err) {
     errors = (err as Error).message
+    // Add this line:
+    result.recordType = line[0]
   }
 
   result.valid = errors === null
