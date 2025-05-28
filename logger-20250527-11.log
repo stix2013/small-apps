@@ -1,0 +1,3 @@
+2025-05-27 11:45:48 [info] [logger] test message
+2025-05-27 11:45:48 [info] [test-label] info message
+2025-05-27 11:45:48 [error] [test-label] error message
