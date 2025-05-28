@@ -11,3 +11,5 @@ staging
 data
 .*.un~
 node_modules
+*.log
+.*.json
