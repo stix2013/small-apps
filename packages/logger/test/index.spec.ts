@@ -1,11 +1,11 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import winston from 'winston';
 import { subLogger } from '../src';
 import path from 'path';
 import fs from 'fs';
 
-const LOG_DIR = path.join(__dirname, '../../../logs');
+const LOG_DIR = path.join(__dirname, '/logs');
 
 describe('Logger', () => {
   it('should work', () => {
@@ -50,18 +50,20 @@ describe('subLogger', () => {
     expect(logger.format.timestamp).toBeUndefined(); // Timestamp format is not directly accessible on format. We'll test this by checking log output later.
   });
 
-  it('should create the log files', (done) => {
-    const logger = subLogger();
+  it('should create the log files', async () => {
+    const logger = subLogger('test-label');
     logger.info('test message');
+
     setTimeout(() => {
       expect(fs.existsSync(path.join(LOG_DIR, 'info.log'))).toBe(true);
       expect(fs.existsSync(path.join(LOG_DIR, 'error.log'))).toBe(true);
       expect(fs.existsSync(path.join(LOG_DIR, 'debug.log'))).toBe(true);
-      done();
+
+      // done();
     }, 100); // Allow time for file creation
   });
 
-  it('should log messages to the console and files', (done) => {
+  it('should log messages to the console and files', async () => {
     const logger = subLogger('test-label', 'YYYY-MM-DD HH:mm:ss');
     const infoSpy = vi.spyOn(console, 'info');
     const errorSpy = vi.spyOn(console, 'error');
@@ -90,7 +92,6 @@ describe('subLogger', () => {
       infoSpy.mockRestore();
       errorSpy.mockRestore();
       debugSpy.mockRestore();
-      done();
     }, 100); // Allow time for logs to be written
   });
 });

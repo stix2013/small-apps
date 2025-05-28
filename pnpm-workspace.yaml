@@ -4,4 +4,3 @@ packages:
   - packages/*/example
 onlyBuiltDependencies:
   - esbuild
-  - sharp

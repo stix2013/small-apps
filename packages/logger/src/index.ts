@@ -1,30 +1,28 @@
-import { config } from 'dotenv'
 import DailyRotateFile from 'winston-daily-rotate-file'
 import { type Logger, addColors, format, loggers, transports } from 'winston'
-
+import { loadConfig } from './load-config'
 //
 const { colorize, combine, label: formatLabel, printf: formatPrint, timestamp } = format
 
-// read environment file
-config()
-
-const APP_NAME = process.env.APP_NAME || 'logger'
-const DAILY_FREQUENCY = process.env.LOG_DAILY_FREQUENCY
-const DAILY_ZIP = !!(process.env.LOG_DAILY_ZIP || process.env.LOG_DAILY_ZIP === 'yes')
-const TIMESTAMP_FORMAT = process.env.LOG_TIME_FORMAT || 'YYYY-MM-DD HH:mm:ss'
-const DAILY_FORMAT = process.env.LOG_DAILY_FORMAT || 'YYYYMMDD-HH'
-const FILE_INFO = process.env.LOG_FILENAME_INFO || 'info.log'
-const FILE_COMBINE = process.env.LOG_FILENAME_COMBINE || 'combine.log'
-const FILE_ERROR = process.env.LOG_FILENAME_ERROR || 'error.log'
-const FILE_EXCEPTION = process.env.LOG_FILENAME_EXCEPTION || 'exception.log'
-const MAX_SIZE = process.env.LOG_MAX_SIZE || '20m'
-const MAX_FILES = process.env.LOG_MAX_FILES || '14d'
-const DAILY_PATH = process.env.LOG_DAILY_PATH || '.'
-const DAILY_FILENAME = `${DAILY_PATH}/${APP_NAME.toLowerCase()}-%DATE%.log`
 
 export interface YellowLogger {
   logger: Logger
 }
+
+const {
+  APP_NAME,
+  DAILY_FREQUENCY,
+  DAILY_ZIP,
+  TIMESTAMP_FORMAT,
+  DAILY_FORMAT,
+  FILE_INFO,
+  FILE_COMBINE,
+  FILE_ERROR,
+  FILE_EXCEPTION,
+  MAX_SIZE,
+  MAX_FILES,
+  DAILY_FILENAME
+} = loadConfig();
 
 const customFormat = formatPrint(({ timestamp, label, message, level }) => {
   return `${timestamp} [${level}] [${label}] ${message}`
