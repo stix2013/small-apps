@@ -3,7 +3,7 @@ import { defineBuildConfig } from 'unbuild';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineBuildConfig({
-  declaration: true,
+  declaration: false,
   failOnWarn: false,
   clean: true,
   externals: ['@yellow-mobile/logger', '@yellow-mobile/utils'],
