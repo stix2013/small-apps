@@ -21,6 +21,8 @@ const simInnSMSHealthcheck = process.env.SIMINN_SMS_HEALTHCHECK || '/smap/health
 const simInnSMSUser = process.env.SIMINN_SMS_USER || ''
 const simInnSMSPassword = process.env.SIMINN_SMS_PASSWORD || ''
 
+console.log(`        path ${process.env.WATCHER_PATH}`)
+
 export default {
   path: process.env.WATCHER_PATH || _path,
   ready,

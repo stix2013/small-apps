@@ -1,0 +1,36 @@
+APP_NAME='WATCHER'
+PREFIX_FILE='S4PGWB,S4PGWM,S4SVRO'
+RETRIEVE_ALL=false
+WATCHER_PATH='/home/stevan/mount/test'
+REDIS_HOST=localhost
+REDIS_PORT=5556
+WORKER_COUNT=2
+BASE_URL='http://localhost:8090/'
+PATH_WEBHOOK='api/cdr/webhook'
+EXPRESS_PORT=3700
+
+# logger
+LOG_TIME_FORMAT='YYYY-MM-DD HH:mm:ss'
+LOG_FILENAME_COMBINE='/home/stevan/tmp/logs/combine.log'
+LOG_FILENAME_INFO='/home/stevan/tmp/logs/info.log'
+LOG_FILENAME_ERROR='/home/stevan/tmp/logs/error.log'
+LOG_FILENAME_EXCEPTION='/home/stevan/tmp/logs/exception.log'
+LOG_DAILY_FREQUENCY='15m'
+LOG_DAILY_ZIP='yes'
+LOG_DAILY_FORMAT='YYYYMMDDHH'
+LOG_DAILY_PATH='/home/stevan/tmp/logs'
+LOG_MAX_SIZE='20m'
+LOG_MAX_FILES='14d'
+
+# API SIMINN
+SIMINN_API_BASE="https://api.siminn.is/serviceprovider"
+SIMINN_API_PATH_PING="/ping"
+SIMINN_API_USER="Yellow"
+SIMINN_API_AUTH_TYPE="Basic"
+SIMINN_API_AUTH="eWVsbG93OnpiMjhaR1NHcmRNZVJ4QjlXeQ=="
+
+# SMS SIMINN
+SIMINN_SMS_BASE="https://vasp.siminn.is"
+SIMINN_SMS_HEALTHCHECK="/smap/healthcheck"
+SIMINN_SMS_USER=yellowbv
+SIMINN_SMS_PASS=zb28ZGSGrdMeRxB9Wy

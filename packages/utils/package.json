@@ -40,7 +40,7 @@
     "currency-symbol-map": "^5.1.0"
   },
   "peerDependencies": {
-    "consola": "^2.15.3"
+    "consola": "^3.4.0"
   },
   "devDependencies": {
     "@yellow-mobile/eslint-config": "workspace:*",

@@ -94,8 +94,3 @@ export const subLogger = (lblString?: string, fmtTimestamp?: string) => {
   })
 }
 
-// export const subLogger = (tag: string) => {
-//   logger.child({
-//     format: defaultFormat(tag, TIMESTAMP_FORMAT)
-//   })
-// }
