@@ -5,7 +5,6 @@
   "author": "",
   "type": "module",
   "devDependencies": {
-    "@yellow-mobile/eslint-config": "workspace:*",
     "typescript": "^5.8.3",
     "unbuild": "^3.5.0"
   },
@@ -29,7 +28,6 @@
     }
   },
   "scripts": {
-    "lint": "eslint --ext .js,.ts --ignore-path .eslintignore .",
     "prepack": "unbuild",
     "build": "unbuild",
     "type-check": "tsc"

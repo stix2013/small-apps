@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getDateFromFormatted } from '../src/dates' // Assuming index.ts is exported as 'dates'
 
 describe('getDateFromFormatted', () => {

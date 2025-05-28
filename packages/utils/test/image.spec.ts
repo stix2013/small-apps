@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getImageAlt, getImageSrc } from '../src/image'
 
 // Mock Image type for testing purposes

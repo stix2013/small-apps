@@ -20,7 +20,6 @@
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-jsdoc": "50.6.17",
     "eslint-plugin-no-only-tests": "3.3.0",
-    "eslint-plugin-vue": "10.1.0",
     "fs-extra": "^11.3.0",
     "mustache": "^4.2.0",
     "picocolors": "1.1.1",
@@ -53,16 +52,11 @@
     "build:stub": "pnpm --filter './packages/**' prepack --stub",
     "cleanup": "npx rimraf -v -g pnpm-lock.yaml dist **/node_modules **/dist apps/web/nuxt-dist **/.nuxt **/.turbo",
     "cleanup:dist": "rimraf -v -g **/dist",
-    "cleanup:eslint": "rimraf -v -g **/.eslintcache",
     "cleanup:modules": "rimraf -v -g **/node_modules",
-    "generate:web": "pnpm run web generate",
-    "lint": "eslint --ext .vue,.ts,.js,.mjs .",
-    "lint:fix": "eslint --ext .vue,.ts,.js,.mjs . --fix",
     "prepack": "FORCE_COLOR=3 pnpm -r prepack",
-    "prod:web": "pnpm --filter @yellow-mobile/web run generate:production",
-    "staging:web": "pnpm --filter @yellow-mobile/web run generate:staging",
-    "web": "pnpm --filter @yellow-mobile/web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "dotenv": "16.5.0",

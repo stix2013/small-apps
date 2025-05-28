@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { tableHeaderNetwork } from '../src/coverage/table-header-network'
 import type { CoverageNetworkHeaderItem } from '@yellow-mobile/types/pages/coverage'
 

@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
-  hexToRgb,
-  toHex,
-  rgbToHex,
-  lighten,
   darken,
-  generateColors
+  generateColors,
+  hexToRgb,
+  lighten,
+  rgbToHex,
+  toHex
 } from '../src/colors/generate-colors'
 
 describe('hexToRgb', () => {

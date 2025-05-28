@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { ContinentCode } from '@yellow-mobile/types/app/continent'
 import type { MapRegion } from '@yellow-mobile/types/map/region'
 import type { CoverageNetwork } from '@yellow-mobile/types/pages/coverage'
@@ -6,17 +6,17 @@ import type { CountryCodeName } from '@yellow-mobile/types/app/country'
 import type { WithFilter } from '@yellow-mobile/types/generic'
 
 import {
-  searchContinentRegionCode,
-  getCountryCoverageFilter,
+  calculateChartData,
   filterData,
+  getCountryCoverageFilter,
   getCoverageBandCode,
+  getCoverageContinents,
+  getCoverageCountries,
   getCoverageInternetCode,
   makeCoverageTooltipHtml,
-  getCoverageContinents,
-  sortString,
+  searchContinentRegionCode,
   sortCountries,
-  getCoverageCountries,
-  calculateChartData
+  sortString
 } from '../src/coverage/coverage.utils'
 
 // Mocks for imported data structures

@@ -29,9 +29,11 @@ export default defineConfig([globalIgnores([
     "**/.nuxt",
     "**/staging",
     "**/*.cjs",
+    "**/logs",
+    "**/*.spec.ts"
 ]), {
     extends: fixupConfigRules(compat.extends(
-        "plugin:jsdoc/recommended", 
+        "plugin:jsdoc/recommended",
         "plugin:import/typescript",
         "plugin:@typescript-eslint/recommended",
     )),

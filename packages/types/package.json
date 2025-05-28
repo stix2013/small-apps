@@ -3,9 +3,6 @@
   "description": "",
   "version": "0.4.0",
   "author": "SH Moeladi",
-  "devDependencies": {
-    "@yellow-mobile/eslint-config": "workspace:*"
-  },
   "keywords": [
     "type definitions",
     "yellow mobile apps type definitions"

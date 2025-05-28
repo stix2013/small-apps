@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { timeout } from '../src/timeout'
 import { REFRESH_TIME_PERIOD } from '../src/const/refresh'
 

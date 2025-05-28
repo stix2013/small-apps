@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { tabContinentsCoverage } from '../src/coverage/tab-continents-coverage'
 import type { TabContinentItem } from "@yellow-mobile/types/pages/coverage"
 

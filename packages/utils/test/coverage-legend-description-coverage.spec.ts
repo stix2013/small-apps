@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { legendDescriptionCoverage } from '../src/coverage/legend-description-coverage'
 import type { LegendDescription } from '@yellow-mobile/types/app/legend-description'
 

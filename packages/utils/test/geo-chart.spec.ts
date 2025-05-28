@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getGeoChartOptions } from '../src/geo-chart'
 
 // Define a type for the config object based on its usage in the function

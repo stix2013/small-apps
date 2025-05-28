@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getCurrencySymbol, getSymbol } from '../src/currency-symbols'
 // No need to mock the JSON, it's imported directly by the module
 

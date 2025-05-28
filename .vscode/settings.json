@@ -61,5 +61,8 @@
   "files.watcherExclude": {
     "**/.eslintcache": true,
     "**/.turbo": true
-  }
+  },
+  "cSpell.words": [
+    "tmpl"
+  ]
 }
