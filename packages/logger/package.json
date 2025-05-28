@@ -26,7 +26,8 @@
     "build": "unbuild",
     "lint": "eslint --cache --ext .js,.ts --ignore-path .eslintignore .",
     "lint:fix": "eslint --cache --ext .js,.ts --ignore-path .eslintignore . --fix",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "test": "vitest"
   },
   "sideEffects": false,
   "type": "module",

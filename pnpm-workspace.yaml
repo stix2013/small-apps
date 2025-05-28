@@ -1,5 +1,7 @@
 packages:
-  # all packages in sub dirs of packages/ and apps/
-  - 'apps/*'
-  - 'packages/*'
-  - 'packages/*/example'
+  - apps/*
+  - packages/*
+  - packages/*/example
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
