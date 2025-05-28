@@ -19,7 +19,7 @@ export function convertToCDRFields (line: string[]): CDRLine {
   } catch (err) {
     errors = (err as Error).message
     // Add this line:
-    result.recordType = line[0]
+    // result.recordType = line[0] as RecordItem
   }
 
   result.valid = errors === null

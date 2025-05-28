@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setVolumeDataMsisdnGauge } from '../set-volume-data-msisdn';
-import type { CDRLine } from '@src/cdr/convert-to-cdr-fields';
-import type { CDRFileInfo } from '@src/cdr/stats-to-cdr-file';
 import { gaugeMsisdnVolumeData } from '@src/monitoring/prometheus/cdr';
+import { CDRFileInfo, CDRLine } from '@src/types';
 
 // Use vi.hoisted to define mocks that need to be used in vi.mock factories
 const { mockLabels, mockSet } = vi.hoisted(() => {
@@ -48,19 +47,22 @@ describe('setVolumeDataMsisdnGauge', () => {
     // Enhanced mockCdrLine to include properties used for labels
     const mockCdrLine: CDRLine = {
       id: 'line1',
-      recordType: 'voice',
-      timestamp: new Date(),
+      number: '12345',
+      imsi: '123456789012345',
+      eventTimestamp: new Date('2023-10-01T12:00:00Z'),
+      eventTimestampNumber: 1696156800000,
+      callIdentification: '123456789012345',// Example timestamp in milliseconds
+      apn: 'internet',
+      recordType: 'SMS',
       eventDuration: 60,
       msisdn: '12345', // Explicitly using 'msisdn'
-      subscriberIdA: '12345', // Keep for other potential uses or if type expects it
       valid: true,
       volumeDownload: 100,
       volumeUpload: 50,
       amountPrerated: 0.1, // Not directly used in these labels, but good for completeness
-      eventResult: 'SUCCESS', // Not used in these labels
-      locationSubscriberA: 'locA', // Not used in these labels
       codeOperator: 'TestNet', // Used for 'network' label
       nulli: 0, // Used for 'offset' label
+      errors: null,
     };
 
     setVolumeDataMsisdnGauge(mockCdrFile, mockCdrLine);

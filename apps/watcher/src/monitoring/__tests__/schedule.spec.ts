@@ -104,7 +104,7 @@ describe('createSchedule', () => {
     vi.mocked(gaugeSimInnSMS.labels).mockReturnThis();
     vi.mocked(gaugeSimInnSMS.set).mockClear(); // Clear any previous calls to set
     // Use the capturedMockRules for consistency in mock and assertions
-    vi.mocked(createScheduleRules).mockReturnValue(capturedMockRules);
+    // vi.mocked(createScheduleRules).mockReturnValue(capturedMockRules);
 
 
     // Call createSchedule to set up the jobs
@@ -113,7 +113,7 @@ describe('createSchedule', () => {
     // Assert that scheduleJob was called with the correct parameters
     // Accessing the mocked scheduleJob correctly:
     // If 'node-schedule' default exports an object with scheduleJob:
-    const mockScheduleJobInstance = vi.mocked(schedule.scheduleJob || schedule.default.scheduleJob);
+    const mockScheduleJobInstance = vi.mocked(schedule.scheduleJob);
 
     expect(mockScheduleJobInstance).toHaveBeenCalledTimes(2);
     expect(mockScheduleJobInstance).toHaveBeenCalledWith(
@@ -129,32 +129,32 @@ describe('createSchedule', () => {
 
     // Capture the callbacks
     // Find the API job callback by name 'jobAPI' (first argument to scheduleJob)
-    const mockScheduleJobRef = schedule.scheduleJob || schedule.default.scheduleJob; // Get the correct ref
+    const mockScheduleJobRef = schedule.scheduleJob; // Get the correct ref
     const apiJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'jobAPI');
     // Find the SMS job callback by name 'jobSMS' (first argument to scheduleJob)
     const smsJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'jobSMS');
 
-    if (apiJobCall && typeof apiJobCall[2] === 'function') { // apiJobCall[1] is the rule, apiJobCall[2] is the callback
-      jobAPICallback = apiJobCall[2] as () => Promise<void>;
+    if (apiJobCall && typeof apiJobCall[1] === 'function') { // apiJobCall[1] is the rule, apiJobCall[2] is the callback
+      jobAPICallback = apiJobCall[1] as () => Promise<void>;
     } else {
       // If jobAPI wasn't found by its specific name, try to find SIMINN-API
       // This is a fallback based on the new assertions, though jobAPI is the actual name used in schedule.ts
       const siminnApiJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'SIMINN-API');
-      if (siminnApiJobCall && typeof siminnApiJobCall[2] === 'function') {
-        jobAPICallback = siminnApiJobCall[2] as () => Promise<void>;
+      if (siminnApiJobCall && typeof siminnApiJobCall[1] === 'function') {
+        jobAPICallback = siminnApiJobCall[1] as () => Promise<void>;
         console.warn("Found API job by 'SIMINN-API', ensure 'jobAPI' is the name used in schedule.ts for consistency with tests.");
       } else {
         throw new Error('API Job callback not captured. Ensure scheduleJob was called with "jobAPI" or "SIMINN-API" as the job name.');
       }
     }
 
-    if (smsJobCall && typeof smsJobCall[2] === 'function') { // smsJobCall[1] is rule, smsJobCall[2] is callback
-      jobSMSCallback = smsJobCall[2] as () => Promise<void>;
+    if (smsJobCall && typeof smsJobCall[1] === 'function') { // smsJobCall[1] is rule, smsJobCall[2] is callback
+      jobSMSCallback = smsJobCall[1] as () => Promise<void>;
     } else {
       // Fallback for SMS job similar to API job
       const siminnSmsJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'SIMINN-SMS');
-      if (siminnSmsJobCall && typeof siminnSmsJobCall[2] === 'function') {
-        jobSMSCallback = siminnSmsJobCall[2] as () => Promise<void>;
+      if (siminnSmsJobCall && typeof siminnSmsJobCall[1] === 'function') {
+        jobSMSCallback = siminnSmsJobCall[1] as () => Promise<void>;
         console.warn("Found SMS job by 'SIMINN-SMS', ensure 'jobSMS' is the name used in schedule.ts for consistency with tests.");
       } else {
         throw new Error('SMS Job callback not captured. Ensure scheduleJob was called with "jobSMS" or "SIMINN-SMS" as the job name.');

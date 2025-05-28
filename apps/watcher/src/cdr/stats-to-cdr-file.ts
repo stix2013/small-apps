@@ -1,8 +1,7 @@
 import type { Stats } from 'node:fs'
 import { parse } from 'pathe'
 import { v4 as uuidV4 } from 'uuid'
-import format from 'date-fns/format'
-//
+import { format } from 'date-fns/format'
 import { FORMAT_DATE_CDR } from '@src/consts'
 import type { CDRFile } from '@src/types/cdr-file'
 

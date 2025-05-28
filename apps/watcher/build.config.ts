@@ -1,5 +1,5 @@
-import path from 'pathe'
-import { defineBuildConfig } from 'unbuild'
+import path from 'pathe';
+import { defineBuildConfig } from 'unbuild';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineBuildConfig({
@@ -9,18 +9,22 @@ export default defineBuildConfig({
   externals: ['@yellow-mobile/logger', '@yellow-mobile/utils'],
   rollup: {
     resolve: {
-      exportConditions: ['production', 'node']
+      exportConditions: ['production', 'node'],
     },
-    plugins: [
-      visualizer({
-        filename: 'dist/stats.html',
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      }),
-    ],
   },
   alias: {
-    '@src': path.resolve(__dirname, 'src')
-  }
-})
+    '@src': path.resolve(__dirname, 'src'),
+  },
+  hooks: {
+    'rollup:options'(_ctx, options) {
+      options.plugins.push(
+        visualizer({
+          filename: 'dist/stats.html',
+          open: false,
+          gzipSize: true,
+          brotliSize: true,
+        })
+      );
+    },
+  },
+});

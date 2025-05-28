@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setVolumeDataGauge } from '../set-volume-data';
-import type { CDRFileInfo } from '@src/cdr/stats-to-cdr-file';
 import { gaugeVolumeData } from '@src/monitoring/prometheus';
+import { CDRFileInfo } from '@src/types';
 
 // Use vi.hoisted to define mocks that need to be used in vi.mock factories
 const { mockLabels, mockSet } = vi.hoisted(() => {
@@ -62,7 +62,7 @@ describe('setVolumeDataGauge', () => {
         totalUpload,
         totalInvalidDownload,
         totalInvalidUpload,
-        offset
+        // offset
       );
 
       expect(gaugeVolumeData.labels).toHaveBeenCalledTimes(4);
@@ -146,7 +146,7 @@ describe('setVolumeDataGauge', () => {
         offset: undefined,
       });
       expect(mockSet).toHaveBeenNthCalledWith(2, totalUpload);
-      
+
       // 3. Invalid Download
       expect(gaugeVolumeData.labels).toHaveBeenNthCalledWith(3, {
         type: 'download',
@@ -165,7 +165,7 @@ describe('setVolumeDataGauge', () => {
       });
       expect(mockSet).toHaveBeenNthCalledWith(4, totalInvalidUpload);
     });
-    
+
     it('should use undefined for offset if offset param is undefined (cdrFile.nulli is irrelevant)', () => {
       const cdrFileWithIrrelevantNulli = { ...mockCdrFile, nulli: 999 }; // nulli value doesn't matter
 

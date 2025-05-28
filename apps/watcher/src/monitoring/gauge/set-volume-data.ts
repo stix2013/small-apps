@@ -7,33 +7,35 @@ export const setVolumeDataGauge = (
   totalUpload: number,
   totalInvalidDownload: number,
   totalInvalidUpload: number,
-  offset?: number
+  // offset?: number
 ) => {
   gaugeVolumeData.labels({
+    label: cdrFile.number,
     type: 'download',
-    valid: 'true',
-    group: cdrFile.group,
-    offset
-  }).set(totalDownload)
+    valid: 'true'
+  }).inc(totalDownload)
 
   gaugeVolumeData.labels({
+    label: cdrFile.number,
     type: 'upload',
     valid: 'true',
-    group: cdrFile.group,
-    offset
-  }).set(totalUpload)
+  }).inc(totalUpload)
 
   gaugeVolumeData.labels({
+    label: cdrFile.number,
+    type: 'download',
+    valid: 'true',
+  }).inc(totalUpload)
+
+  gaugeVolumeData.labels({
+    label: cdrFile.number,
     type: 'download',
     valid: 'false',
-    group: cdrFile.group,
-    offset
-  }).set(totalInvalidDownload)
+  }).inc(totalInvalidDownload)
 
   gaugeVolumeData.labels({
+    label: cdrFile.number,
     type: 'upload',
     valid: 'false',
-    group: cdrFile.group,
-    offset
-  }).set(totalInvalidUpload)
+  }).inc(totalInvalidUpload)
 }

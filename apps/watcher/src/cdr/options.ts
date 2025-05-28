@@ -1,6 +1,6 @@
-import type { WatchOptions } from 'chokidar'
+import type { ChokidarOptions } from 'chokidar'
 
-export const options: WatchOptions = {
+export const options: ChokidarOptions = {
   usePolling: true,
   persistent: true,
   depth: 4,

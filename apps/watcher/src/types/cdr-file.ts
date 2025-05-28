@@ -4,7 +4,7 @@ export interface CDRFile {
   id: string
   filename: string
   fileCreatedAt: string // Date
-  status: 'OK' | 'ERROR'
+  status: 'OK' | 'ERROR' | 'EMPTY_CONTENT' | 'PROCESSING'
   lineCount: number
   lineInvalidCount: number
   error?: null | string

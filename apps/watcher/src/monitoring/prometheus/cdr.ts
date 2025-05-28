@@ -5,6 +5,7 @@ export const gaugeVolumeData = new client.Counter({
   name: 'siminn_cdr_total_data',
   help: 'Total data in byte',
   labelNames: [
+    'label',
     'type',
     // 'group',
     'valid',
@@ -36,7 +37,7 @@ export const counterProcess = new client.Counter({
   name: 'siminn_cdr_process',
   help: 'CDR processed files',
   labelNames: [
-    // 'label',
+    'label',
     'group',
     'filename'
   ] as const

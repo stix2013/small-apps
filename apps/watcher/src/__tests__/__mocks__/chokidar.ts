@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 export const chokidarMock = {
   watch: vi.fn().mockReturnValue({
     on: vi.fn().mockReturnThis(),
