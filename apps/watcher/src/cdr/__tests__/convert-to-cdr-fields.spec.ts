@@ -1,7 +1,6 @@
 import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest';
 import { convertToCDRFields } from '../convert-to-cdr-fields';
 import { validateCdrType } from '@src/validation/cdr-type';
-import { getDateFromFormatted } from '@yellow-mobile/utils';
 import { v4 as uuidV4 } from 'uuid';
 
 // Mock external dependencies
@@ -13,18 +12,15 @@ vi.mock('@src/validation/cdr-type', () => ({
   validateCdrType: vi.fn(),
 }));
 
-vi.mock('@yellow-mobile/utils', () => ({
-  getDateFromFormatted: vi.fn(),
-}));
-
 describe('convertToCDRFields', () => {
-  const mockDate = new Date('2023-10-26T12:00:00.000Z');
+  const mockDate = new Date('2023-10-26T12:00:00.000Z'); // This might need adjustment later
   const mockUuid = 'test-uuid';
 
   beforeEach(() => {
     vi.resetAllMocks();
     (uuidV4 as Mock).mockReturnValue(mockUuid);
-    (getDateFromFormatted as Mock).mockReturnValue(mockDate);
+    // getDateFromFormatted is now inlined, so we don't mock it here.
+    // The tests will use the actual implementation.
   });
 
   it('should correctly process a valid CDR line', () => {
@@ -62,15 +58,15 @@ describe('convertToCDRFields', () => {
     expect(result.valid).toBe(true);
     expect(result.id).toBe(mockUuid);
     expect(validateCdrType).toHaveBeenCalledWith('voice');
-    // Ensure getDateFromFormatted is called with line[6] and parsed line[13]
-    expect(getDateFromFormatted).toHaveBeenCalledWith('20231026120000', 7);
+    // getDateFromFormatted is now inlined; direct call checks are removed.
+    // We will rely on checking the resulting eventTimestamp.
     expect(result.recordType).toBe('voice');
     expect(result.number).toBe('08123456789');
     expect(result.numberB).toBe('08987654321');
     expect(result.numberDialed).toBe('08987654321');
     expect(result.msisdn).toBe('msisdn001');
     expect(result.imsi).toBe('imsi001');
-    expect(result.eventTimestamp).toEqual(mockDate); // Assuming getDateFromFormatted mock returns mockDate
+    expect(result.eventTimestamp).toEqual(new Date('2023-10-26T11:53:00.000Z')); // Actual expected date
     expect(result.eventTimestampNumber).toBe(20231026120000);
     expect(result.eventDuration).toBe(60);
     expect(result.volumeDownload).toBe(1024);
@@ -121,10 +117,9 @@ describe('convertToCDRFields', () => {
     expect(result.valid).toBe(false);
     expect(result.id).toBe(mockUuid); // Assuming mockUuid is 'test-uuid' from beforeEach
     expect(validateCdrType).toHaveBeenCalledWith('invalid_type');
-    // This is the key assertion to fix:
-    expect(getDateFromFormatted).toHaveBeenCalledWith('20231026123000', 0);
+    // getDateFromFormatted is now inlined; direct call checks are removed.
     expect(result.recordType).toBe('invalid_type');
-    expect(result.eventTimestamp).toEqual(mockDate); // Assuming mockDate from beforeEach
+    expect(result.eventTimestamp).toEqual(new Date('2023-10-26T12:30:00.000Z')); // Actual expected date
     expect(result.eventDuration).toBe(30);
     expect(result.msisdn).toBe('msisdn1');
   });
@@ -158,9 +153,11 @@ describe('convertToCDRFields', () => {
     expect(result.valid).toBe(true); // As per original logic, only validateCdrType makes it invalid
     expect(result.id).toBe(mockUuid);
     expect(validateCdrType).toHaveBeenCalledWith('sms');
-    expect(getDateFromFormatted).toHaveBeenCalledWith('20231026130000', -5);
+    // getDateFromFormatted is now inlined; direct call checks are removed.
     expect(result.recordType).toBe('sms');
-    expect(result.eventTimestamp).toEqual(mockDate);
+    // The actual date will be 2023-10-26 13:00:00 with an offset of -00:05
+    // which means 2023-10-26T13:05:00.000Z
+    expect(result.eventTimestamp).toEqual(new Date('2023-10-26T13:05:00.000Z'));
     expect(result.eventDuration).toBe(0);      // parseInt('') || 0
     expect(result.volumeDownload).toBe(NaN);    // parseInt('abc') - will be NaN
     expect(result.volumeUpload).toBe(NaN);      // parseInt('') - will be NaN
@@ -200,12 +197,13 @@ describe('convertToCDRFields', () => {
 
     expect(result.valid).toBe(true);
     expect(result.id).toBe(mockUuid);
-    expect(getDateFromFormatted).toHaveBeenCalledWith('20231026140000', 0);
+    // getDateFromFormatted is now inlined; direct call checks are removed.
     expect(result.recordType).toBe('data');
     expect(result.number).toBe('num_only');
     expect(result.numberB).toBe('');
     expect(result.msisdn).toBe('msisdn_data');
-    expect(result.eventTimestamp).toEqual(mockDate);
+    // The actual date will be 2023-10-26 14:00:00 with an offset of +00:00
+    expect(result.eventTimestamp).toEqual(new Date('2023-10-26T14:00:00.000Z'));
     expect(result.eventDuration).toBe(500);
     expect(result.volumeDownload).toBe(2048);
     expect(result.volumeUpload).toBe(0); // parseInt('0') is 0
