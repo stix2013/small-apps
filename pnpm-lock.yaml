@@ -151,13 +151,13 @@ importers:
       consola:
         specifier: ^3.4.0
         version: 3.4.2
-      currency-symbol-map:
-        specifier: ^5.1.0
-        version: 5.1.0
     devDependencies:
       '@yellow-mobile/types':
         specifier: workspace:*
         version: link:../types
+      currency-symbol-map:
+        specifier: ^5.1.0
+        version: 5.1.0
       unbuild:
         specifier: ^3.5.0
         version: 3.5.0(typescript@5.8.3)
