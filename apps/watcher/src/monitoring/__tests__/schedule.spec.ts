@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createSchedule } from '../schedule';
+import { createSchedule } from '../create-schedule';
 import schedule from 'node-schedule';
 import { simInnApi, simInnSMS } from '../siminn';
 import { gaugeSimInnApi, gaugeSimInnSMS } from '../prometheus';
-import { createScheduleRules } from '../rules';
+import { createScheduleRules } from '../create-schedule-rules';
 import config from '@src/config';
 import { createLoggers } from '@src/utils/logger';
 

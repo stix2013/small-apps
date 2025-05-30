@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from 'uuid'
 //
-import type { CDRLine } from '@src/types'
 import { validateCdrType } from '@src/validation/cdr-type'
+import type { CDRLine } from '@yellow-mobile/types'
 
 // format date
 // format CCYYMMDDHHMMSS

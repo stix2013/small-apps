@@ -1,4 +1,4 @@
 export * from './prometheus'
-export * from './schedule'
+export * from './create-schedule'
 //
 export * from './gauge'

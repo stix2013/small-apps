@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 //
-import type { Address } from '@yellow-mobile/types/app/address'
+import type { Address } from '@yellow-mobile/types/src/app/address'
 import { serializeAddressGoogleMap } from '../src/address-google-map'
 
 describe('Test serializeAddressGoogleMap', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { tabLettersCoverage } from '../src/coverage/tab-letters-coverage'
-import type { TabItem } from '@yellow-mobile/types/app/tab'
+import type { TabItem } from '@yellow-mobile/types/src/app/tab'
 
 describe('tabLettersCoverage', () => {
   it('should be an object', () => {

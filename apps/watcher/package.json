@@ -6,6 +6,7 @@
   "private": true,
   "dependencies": {
     "@yellow-mobile/logger": "workspace:*",
+
     "axios": "^1.9.0",
     "chokidar": "^4.0.3",
     "date-fns": "^4.1.0",

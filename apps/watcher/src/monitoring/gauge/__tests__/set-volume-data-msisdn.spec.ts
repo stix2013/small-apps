@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { setVolumeDataMsisdnGauge } from '../set-volume-data-msisdn';
 import { gaugeMsisdnVolumeData } from '@src/monitoring/prometheus/cdr';
-import { CDRFileInfo, CDRLine } from '@src/types';
+import { CDRFileInfo, CDRLine } from '@yellow-mobile/types';
 
 // Use vi.hoisted to define mocks that need to be used in vi.mock factories
 const { mockLabels, mockSet } = vi.hoisted(() => {

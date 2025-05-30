@@ -6,7 +6,10 @@ export default defineBuildConfig({
   declaration: false,
   failOnWarn: false,
   clean: true,
-  externals: ['@yellow-mobile/logger'],
+  externals: [
+    '@yellow-mobile/types',
+    '@yellow-mobile/logger',
+  ],
   rollup: {
     resolve: {
       exportConditions: ['production', 'node'],

@@ -29,3 +29,30 @@ export interface CDRLine {
   callIdentification: string
   errors: null | string
 }
+
+export type CDRRecord = Record<RecordItem, string>
+
+export interface CDRFileInfo {
+  group: string
+  name: string
+  number: string | number
+  birthtime?: Date
+  lines: {
+    total: number
+    invalid: number
+  }
+}
+
+export interface CDRFile {
+  id: string
+  filename: string
+  fileCreatedAt: string // Date
+  status: 'OK' | 'ERROR' | 'EMPTY_CONTENT' | 'PROCESSING'
+  lineCount: number
+  lineInvalidCount: number
+  error?: null | string
+  processedAt?: null | string
+  lineIndexBegin: number
+  lines: CDRLine[]
+}
+

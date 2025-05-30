@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { legendDescriptionCoverage } from '../src/coverage/legend-description-coverage'
-import type { LegendDescription } from '@yellow-mobile/types/app/legend-description'
+import type { LegendDescription } from '@yellow-mobile/types/src/app/legend-description'
 
 describe('legendDescriptionCoverage', () => {
   it('should be an array', () => {

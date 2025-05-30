@@ -1,10 +1,8 @@
 import type { Stats } from 'node:fs'
 //
 import { postData } from '@src/plugins/post-data'
-import type { CDRFileInfo, CDRLine } from '@src/types'
+import type { CDRFileInfo, CDRLine } from '@yellow-mobile/types'
 import {
-  // counterMsisdnVolumeData,
-  // counterNetworkVolumeData,
   counterProcess,
   histogramPostData,
   histogramProcess,

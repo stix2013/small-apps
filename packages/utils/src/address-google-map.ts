@@ -1,4 +1,4 @@
-import type { Address } from '@yellow-mobile/types/app/address'
+import type { Address } from '@yellow-mobile/types/src/app/address'
 
 export function serializeAddressGoogleMap (
   address: Pick<Address, 'street' | 'city' | 'country'>,

@@ -1,6 +1,7 @@
 import type { Amount } from '../balance/amount'
 import type { ValueUnit } from '../generic'
 import type { InternetUnit, TimeUnit } from '../units'
+import type { Image } from '../app/image'
 
 export interface Product {
   title: string;

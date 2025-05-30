@@ -1,4 +1,4 @@
-import type { Amount } from './amount'
+import type { Amount } from '../balance/amount'
 
 export interface TopUpAmount {
   id: number;
