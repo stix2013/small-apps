@@ -1,4 +1,4 @@
-import type { CDRFileInfo } from '@src/types'
+import type { CDRFileInfo } from '@yellow-mobile/types'
 import { gaugeVolumeData } from '@src/monitoring/prometheus'
 
 export const setVolumeDataGauge = (

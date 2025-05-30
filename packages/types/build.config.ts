@@ -16,8 +16,5 @@ export default defineBuildConfig({
     'src/product/index.ts',
     'src/units/index.ts',
     'src/user/index.ts'
-  ],
-  rollup: {
-    emitCJS: true
-  }
+  ]
 })
