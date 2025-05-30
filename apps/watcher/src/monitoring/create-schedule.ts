@@ -1,5 +1,7 @@
-import schedule, { Job } from 'node-schedule';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import schedule from 'node-schedule';
+import type { Job } from 'node-schedule';
+import axios from 'axios';
+import type { AxiosError, AxiosResponse } from 'axios';
 //
 import config from '@src/config';
 // import { logSimInnApi, logSimInnSMS } from '@src/utils/logger'
