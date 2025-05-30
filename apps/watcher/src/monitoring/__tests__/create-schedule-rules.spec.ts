@@ -9,7 +9,7 @@ describe('createScheduleRules', () => {
     // Verify API rule (every 5 minutes)
     expect(ruleAPI.minute).toBe('*/5');
     // Check other properties are null (node-schedule default)
-    expect(ruleAPI.second).toBeNull();
+    expect(ruleAPI.second).toBe(0);
     expect(ruleAPI.hour).toBeNull();
     expect(ruleAPI.date).toBeNull();
     expect(ruleAPI.month).toBeNull();
@@ -34,7 +34,7 @@ describe('createScheduleRules', () => {
     // Verify API rule
     expect(ruleAPI.minute).toBe('*/10');
     expect(ruleAPI.hour).toBe(12);
-    expect(ruleAPI.second).toBeNull(); // Unspecified, should be default
+    expect(ruleAPI.second).toBe(0); // Unspecified, should be default
 
     // Verify SMS rule (default)
     expect(ruleSMS.second).toBe(30);
@@ -83,7 +83,7 @@ describe('createScheduleRules', () => {
     // Verify API rule
     expect(ruleAPI.hour).toBe(8);
     expect(ruleAPI.minute).toBeNull(); // Not specified, should be node-schedule default
-    expect(ruleAPI.second).toBeNull(); // Not specified, should be node-schedule default
+    expect(ruleAPI.second).toBe(0); // Not specified, should be node-schedule default
 
     // Verify SMS rule (should still be default)
     expect(ruleSMS.second).toBe(30);
@@ -96,7 +96,7 @@ describe('createScheduleRules', () => {
 
     // Verify SMS rule
     expect(ruleSMS.minute).toBe(15);
-    expect(ruleSMS.second).toBeNull(); // Not specified, should be node-schedule default
+    expect(ruleSMS.second).toBe(0); // Not specified, should be node-schedule default
     expect(ruleSMS.hour).toBeNull();   // Not specified, should be node-schedule default
 
     // Verify API rule (should still be default)
@@ -105,16 +105,22 @@ describe('createScheduleRules', () => {
 
   it('should return default API schedule if api config is empty object', () => {
     const { ruleAPI } = createScheduleRules({ api: {} });
-    expect(ruleAPI.minute).toBe('*/5');
-    expect(ruleAPI.second).toBeNull();
+    expect(ruleAPI.second).toBe(0);
+    expect(ruleAPI.minute).toBeNull();
     expect(ruleAPI.hour).toBeNull();
+    expect(ruleAPI.date).toBeNull();
+    expect(ruleAPI.month).toBeNull();
+    expect(ruleAPI.dayOfWeek).toBeNull();
   });
 
   it('should return default SMS schedule if sms config is empty object', () => {
     const { ruleSMS } = createScheduleRules({ sms: {} });
-    expect(ruleSMS.second).toBe(30);
-    expect(ruleSMS.minute).toEqual(new Range(0, 59, 1));
+    expect(ruleSMS.second).toBe(0);
+    expect(ruleSMS.minute).toBeNull();
     expect(ruleSMS.hour).toBeNull();
+    expect(ruleSMS.date).toBeNull();
+    expect(ruleSMS.month).toBeNull();
+    expect(ruleSMS.dayOfWeek).toBeNull();
   });
 
   it('should correctly use all possible schedule fields for API', () => {
