@@ -15,13 +15,16 @@ export interface ScheduleRuleConfig {
   sms?: ScheduleConfig;
 }
 
+export interface ScheduleRules {
+  ruleAPI: schedule.RecurrenceRule;
+  ruleSMS: schedule.RecurrenceRule;
+}
+
 /**
- * Creates schedule rules for API and SMS notifications.
- *
- * @param {ScheduleRuleConfig} [config] - Optional configuration for API and SMS schedules.
- * @returns {{ruleAPI: schedule.RecurrenceRule, ruleSMS: schedule.RecurrenceRule}} - An object containing the schedule rules for API and SMS.
+ * Creates schedule recurrence rules for API and SMS tasks.
+ * Optionally accepts custom configurations for these rules.
  */
-export const createScheduleRules = (config?: ScheduleRuleConfig) => {
+export const createScheduleRules = (config?: ScheduleRuleConfig): ScheduleRules => {
   const ruleAPI = new schedule.RecurrenceRule();
   const ruleSMS = new schedule.RecurrenceRule();
 
