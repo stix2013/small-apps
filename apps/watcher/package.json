@@ -47,6 +47,7 @@
     "test": "vitest"
   },
   "files": [
-    "dist"
+    "dist",
+    ".env"
   ]
 }

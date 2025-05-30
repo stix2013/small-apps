@@ -7,6 +7,7 @@ export default defineBuildConfig({
     'src/index.ts',
     'src/app/index.ts',
     'src/balance/index.ts',
+    'src/cdr/index.ts',
     'src/form/index.ts',
     'src/generic/index.ts',
     'src/links/index.ts',

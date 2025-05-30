@@ -7,14 +7,13 @@ export default defineBuildConfig({
   failOnWarn: false,
   clean: true,
   externals: [
-    '@yellow-mobile/types',
-    '@yellow-mobile/logger',
+    '@yellow-mobile/types'
   ],
-  rollup: {
-    resolve: {
-      exportConditions: ['production', 'node'],
-    },
-  },
+  // rollup: {
+  //   resolve: {
+  //     exportConditions: ['production', 'node'],
+  //   },
+  // },
   alias: {
     '@src': path.resolve(__dirname, 'src'),
   },
