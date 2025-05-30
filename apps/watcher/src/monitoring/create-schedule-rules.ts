@@ -1,4 +1,5 @@
-import schedule, { Range } from 'node-schedule';
+import schedule from 'node-schedule';
+import type { Range } from 'node-schedule';
 
 export interface ScheduleConfig {
   second?: number | string;
