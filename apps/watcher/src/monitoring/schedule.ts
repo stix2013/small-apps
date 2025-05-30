@@ -10,11 +10,11 @@ import { gaugeSimInnApi, gaugeSimInnSMS } from './prometheus'
 // get schedule rules
 import { createScheduleRules } from './rules'
 
-export const createSchedule = () => {
+export const createSchedule = (scheduleName = 'SIMINN-API') => {
   const { logSimInnApi, logSimInnSMS } = createLoggers()
   const { ruleAPI, ruleSMS } = createScheduleRules()
 
-  const jobAPI = schedule.scheduleJob('SIMINN-API', ruleAPI, async () => {
+  const jobAPI = schedule.scheduleJob(scheduleName, ruleAPI, async () => {
     try {
       const response = await simInnApi.get(config.simInnApiPathPing)
       gaugeSimInnApi.labels({ status: response.statusText }).set(response.status)
