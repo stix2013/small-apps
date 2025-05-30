@@ -1,4 +1,4 @@
-import type { TabMap } from '@yellow-mobile/types/app/tab'
+import type { TabMap } from '@yellow-mobile/types/src/app/tab'
 
 export const tabLettersCoverage: TabMap = {
   ad: {

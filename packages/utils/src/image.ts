@@ -1,4 +1,4 @@
-import type { Image } from '@yellow-mobile/types/app/image'
+import type { Image } from '@yellow-mobile/types/src/app/image'
 
 export const getImageAlt = (image: Image): string | undefined => {
   if (!image || image.alt === null || image.alt === undefined) {

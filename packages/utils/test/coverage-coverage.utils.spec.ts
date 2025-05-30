@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
-import type { ContinentCode } from '@yellow-mobile/types/app/continent'
+import type { ContinentCode } from '@yellow-mobile/types/src/app/continent'
 import type { MapRegion } from '@yellow-mobile/types/map/region'
 import type { CoverageNetwork } from '@yellow-mobile/types/pages/coverage'
-import type { CountryCodeName } from '@yellow-mobile/types/app/country'
-import type { WithFilter } from '@yellow-mobile/types/generic'
+import type { CountryCodeName } from '@yellow-mobile/types/src/app/country'
+import type { WithFilter } from '@yellow-mobile/types/src/generic'
 
 import {
   calculateChartData,
@@ -52,11 +52,11 @@ describe('searchContinentRegionCode', () => {
     expect(searchContinentRegionCode(null as any)).toEqual(defaultRegionCodeMock)
     expect(searchContinentRegionCode(undefined as any)).toEqual(defaultRegionCodeMock)
   })
-  
+
   it('should use default scale "1x" if not provided in tabContinentsCoverage', async () => {
     // Import the mocked version
     const { tabContinentsCoverage: mockTabContinents } = await import('../src/coverage/tab-continents-coverage');
-    
+
     // Temporarily add a mock entry without scale to the mocked object
     (mockTabContinents as any).AF = { region: '002', name: 'Africa' }; // No scale
     expect(searchContinentRegionCode('AF' as ContinentCode)).toEqual({ key: 'AF', region: '002', scale: '1x' });
@@ -93,7 +93,7 @@ describe('filterData', () => {
   it('should return empty array if filter does not match', () => {
     expect(filterData<FilterableItem, MyData>(list, 'CAT_X')).toEqual([])
   })
-  
+
   it('should return empty array if filter is undefined and items have filters', () => {
     expect(filterData<FilterableItem, MyData>(list, undefined as any)).toEqual([])
   })
@@ -175,7 +175,7 @@ describe('makeCoverageTooltipHtml', () => {
     const countryNoCode = { ...country, countryCode: '' }
     const html = makeCoverageTooltipHtml(countryNoCode, baseUrl)
     expect(html).toContain(`<img src="${baseUrl}/img/flags/is.svg"`)
-    
+
     const countryNullCode = { ...country, countryCode: null as any }
     const htmlNull = makeCoverageTooltipHtml(countryNullCode, baseUrl)
     expect(htmlNull).toContain(`<img src="${baseUrl}/img/flags/is.svg"`)
@@ -204,7 +204,7 @@ describe('getCoverageContinents', () => {
     // This seems like a bug in the source code. The test will reflect current behavior.
     const result = getCoverageContinents(data, ['AS', 'AF'] as ContinentCode[])
     expect(result.length).toBe(0) // Based on current implementation bug
-    
+
     // If the intention was to process all continents in the array, the fix would be:
     // if (!Array.isArray(continent)) { list.push(continent); } else { list.push(...continent); }
     // And the test would be:
@@ -216,7 +216,7 @@ describe('getCoverageContinents', () => {
     expect(getCoverageContinents([], 'EU' as ContinentCode)).toEqual([])
     expect(getCoverageContinents(null as any, 'EU' as ContinentCode)).toEqual([])
   })
-  
+
   it('should return empty array if continent list is effectively empty', () => {
     expect(getCoverageContinents(data, null as any)).toEqual([]);
     // For an array like [null], it would also be empty as null is not a valid code.
@@ -270,12 +270,12 @@ describe('getCoverageCountries', () => {
     expect(resultAlg.length).toBe(2) // Algeria, algeria
     expect(resultAlg.every(c => c.countryName.toLowerCase().startsWith('alg') || c.countryCode.toLowerCase().startsWith('alg'))).toBe(true)
   })
-  
+
   it('should be case-insensitive for filter term (search=true)', () => {
     const resultAlgLower = getCoverageCountries(data, 'alg', true);
     expect(resultAlgLower.length).toBe(2);
   });
-  
+
   it('should filter by countryCode if name does not match (search=false)', () => {
     const dataWithCodeMatch : CountryCodeName[] = [ { countryName: 'Xyland', countryCode: 'AFG'} ];
     const resultA = getCoverageCountries(dataWithCodeMatch, 'A');
@@ -320,7 +320,7 @@ describe('calculateChartData', () => {
     expect(result[1][1]).toBe(0)   // getCoverageBandCode('')
     expect(result[1][2]).toContain('Anotherland')
     expect(result[1][2]).toContain('/img/flags/al.svg')
-    
+
     // Check Spaceland
     expect(result[2][0]).toBe('SL') // countryCode.trim().toUpperCase()
     expect(result[2][1]).toBe(0)   // getCoverageBandCode('  ') -> 0

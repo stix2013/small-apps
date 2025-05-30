@@ -8,7 +8,7 @@ import { simInnApi, simInnSMS } from './siminn'
 import { gaugeSimInnApi, gaugeSimInnSMS } from './prometheus'
 
 // get schedule rules
-import { createScheduleRules } from './rules'
+import { createScheduleRules } from './create-schedule-rules'
 
 export const createSchedule = (scheduleName = 'SIMINN-API') => {
   const { logSimInnApi, logSimInnSMS } = createLoggers()

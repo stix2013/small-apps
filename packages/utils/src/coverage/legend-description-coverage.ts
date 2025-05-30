@@ -1,4 +1,4 @@
-import type { LegendDescription } from '@yellow-mobile/types/app/legend-description'
+import type { LegendDescription } from '@yellow-mobile/types/src/app/legend-description'
 
 export const legendDescriptionCoverage: LegendDescription[] = [
   {

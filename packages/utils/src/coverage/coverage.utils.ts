@@ -1,8 +1,8 @@
-import type { ContinentCode } from '@yellow-mobile/types/app/continent';
+import type { ContinentCode } from '@yellow-mobile/types/src/app/continent';
 import type { MapRegion } from '@yellow-mobile/types/map/region';
-import type { WithFilter } from '@yellow-mobile/types/generic';
+import type { WithFilter } from '@yellow-mobile/types/src/generic';
 import type { CoverageNetwork } from '@yellow-mobile/types/pages/coverage';
-import type { CountryCodeName } from '@yellow-mobile/types/app/country';
+import type { CountryCodeName } from '@yellow-mobile/types/src/app/country';
 //
 import { tabContinentsCoverage } from './tab-continents-coverage';
 import { tabLettersCoverage } from './tab-letters-coverage';

@@ -5,8 +5,7 @@ import config from '@src/config'
 import { adminClient } from '@src/utils/admin-client'
 import { counterProcess } from '@src/monitoring'
 import { createLoggers } from '@src/utils/logger'
-import type { CDRLine } from '@src/types/cdr-line'
-import type { CDRFile } from '@src/types/cdr-file'
+import type { CDRFile, CDRLine } from '@yellow-mobile/types'
 
 export function postData (file: Omit<CDRFile, 'lines'>, lines: CDRLine[]) {
   const data = {

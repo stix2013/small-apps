@@ -5,7 +5,6 @@ export default defineBuildConfig({
   clean: true,
   externals: [
     '@yellow-mobile/types',
-    'nuxt',
     'consola'
   ],
   entries: [

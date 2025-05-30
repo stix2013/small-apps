@@ -1,7 +1,9 @@
 import type { ContinentCode } from '../app/continent'
 import type { CountryCodeName } from '../app/country'
+import type { Tab } from '../app/tab'
 import type { Price } from '../balance/currency'
-import type { WithFilter } from './generic'
+import type { WithFilter } from '../generic'
+import type { MapScale } from '../map/scale'
 
 export type CoverageSwitchView = 'list' | 'map'
 
