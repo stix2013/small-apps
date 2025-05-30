@@ -1,20 +1,18 @@
-import schedule from 'node-schedule';
+import schedule, { Range } from 'node-schedule';
 
-/**
- * @typedef {object} ScheduleConfig
- * @property {number | string} [second]
- * @property {number | string} [minute]
- * @property {number | string} [hour]
- * @property {number | string} [dayOfMonth]
- * @property {number | string} [month]
- * @property {number | string} [dayOfWeek]
- */
+export interface ScheduleConfig {
+  second?: number | string;
+  minute?: number | string | Range;
+  hour?: number | string | Range;
+  dayOfMonth?: number | string | Range;
+  month?: number | string | Range;
+  dayOfWeek?: number | string | Range;
+}
 
-/**
- * @typedef {object} ScheduleRuleConfig
- * @property {ScheduleConfig} [api]
- * @property {ScheduleConfig} [sms]
- */
+export interface ScheduleRuleConfig {
+  api?: ScheduleConfig;
+  sms?: ScheduleConfig;
+}
 
 /**
  * Creates schedule rules for API and SMS notifications.
@@ -22,7 +20,7 @@ import schedule from 'node-schedule';
  * @param {ScheduleRuleConfig} [config] - Optional configuration for API and SMS schedules.
  * @returns {{ruleAPI: schedule.RecurrenceRule, ruleSMS: schedule.RecurrenceRule}} - An object containing the schedule rules for API and SMS.
  */
-export const createScheduleRules = (config) => {
+export const createScheduleRules = (config?: ScheduleRuleConfig) => {
   const ruleAPI = new schedule.RecurrenceRule();
   const ruleSMS = new schedule.RecurrenceRule();
 
