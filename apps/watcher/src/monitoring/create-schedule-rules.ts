@@ -4,7 +4,7 @@ export interface ScheduleConfig {
   second?: number | string;
   minute?: number | string | Range;
   hour?: number | string | Range;
-  dayOfMonth?: number | string | Range;
+  date?: number | string | Range;
   month?: number | string | Range;
   dayOfWeek?: number | string | Range;
 }
@@ -29,7 +29,7 @@ export const createScheduleRules = (config?: ScheduleRuleConfig) => {
     if (config.api.second !== undefined) ruleAPI.second = config.api.second;
     if (config.api.minute !== undefined) ruleAPI.minute = config.api.minute;
     if (config.api.hour !== undefined) ruleAPI.hour = config.api.hour;
-    if (config.api.dayOfMonth !== undefined) ruleAPI.dayOfMonth = config.api.dayOfMonth;
+    if (config.api.date !== undefined) ruleAPI.date = config.api.date;
     if (config.api.month !== undefined) ruleAPI.month = config.api.month;
     if (config.api.dayOfWeek !== undefined) ruleAPI.dayOfWeek = config.api.dayOfWeek;
   } else {
@@ -42,7 +42,7 @@ export const createScheduleRules = (config?: ScheduleRuleConfig) => {
     if (config.sms.second !== undefined) ruleSMS.second = config.sms.second;
     if (config.sms.minute !== undefined) ruleSMS.minute = config.sms.minute;
     if (config.sms.hour !== undefined) ruleSMS.hour = config.sms.hour;
-    if (config.sms.dayOfMonth !== undefined) ruleSMS.dayOfMonth = config.sms.dayOfMonth;
+    if (config.sms.date !== undefined) ruleSMS.date = config.sms.date;
     if (config.sms.month !== undefined) ruleSMS.month = config.sms.month;
     if (config.sms.dayOfWeek !== undefined) ruleSMS.dayOfWeek = config.sms.dayOfWeek;
   } else {

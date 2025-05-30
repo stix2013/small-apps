@@ -11,7 +11,7 @@ describe('createScheduleRules', () => {
     // Check other properties are null (node-schedule default)
     expect(ruleAPI.second).toBeNull();
     expect(ruleAPI.hour).toBeNull();
-    expect(ruleAPI.dayOfMonth).toBeNull();
+    expect(ruleAPI.date).toBeNull();
     expect(ruleAPI.month).toBeNull();
     expect(ruleAPI.dayOfWeek).toBeNull();
 
@@ -21,7 +21,7 @@ describe('createScheduleRules', () => {
     expect(ruleSMS.minute).toEqual(new Range(0, 59, 1));
     // Check other properties are null (node-schedule default)
     expect(ruleSMS.hour).toBeNull();
-    expect(ruleSMS.dayOfMonth).toBeNull();
+    expect(ruleSMS.date).toBeNull();
     expect(ruleSMS.month).toBeNull();
     expect(ruleSMS.dayOfWeek).toBeNull();
   });
@@ -59,7 +59,7 @@ describe('createScheduleRules', () => {
   it('should use custom configurations for both API and SMS', () => {
     const customConfig = {
       api: { dayOfWeek: 1, hour: 10 }, // Monday at 10 AM
-      sms: { month: 3, dayOfMonth: 15, second: 45 }, // March 15th, at 45th second
+      sms: { month: 3, date: 15, second: 45 }, // March 15th, at 45th second
     };
     const { ruleAPI, ruleSMS } = createScheduleRules(customConfig);
 
@@ -70,7 +70,7 @@ describe('createScheduleRules', () => {
 
     // Verify SMS rule
     expect(ruleSMS.month).toBe(3);
-    expect(ruleSMS.dayOfMonth).toBe(15);
+    expect(ruleSMS.date).toBe(15);
     expect(ruleSMS.second).toBe(45);
     expect(ruleSMS.minute).toBeNull(); // Unspecified
   });
@@ -123,7 +123,7 @@ describe('createScheduleRules', () => {
         second: 1,
         minute: 2,
         hour: 3,
-        dayOfMonth: 4,
+        date: 4,
         month: 5,
         dayOfWeek: 6,
       },
@@ -132,7 +132,7 @@ describe('createScheduleRules', () => {
     expect(ruleAPI.second).toBe(1);
     expect(ruleAPI.minute).toBe(2);
     expect(ruleAPI.hour).toBe(3);
-    expect(ruleAPI.dayOfMonth).toBe(4);
+    expect(ruleAPI.date).toBe(4);
     expect(ruleAPI.month).toBe(5);
     expect(ruleAPI.dayOfWeek).toBe(6);
   });
@@ -143,7 +143,7 @@ describe('createScheduleRules', () => {
         second: 10,
         minute: 20,
         hour: 13,
-        dayOfMonth: 14,
+        date: 14,
         month: 6,
         dayOfWeek: 0, // Sunday
       },
@@ -152,7 +152,7 @@ describe('createScheduleRules', () => {
     expect(ruleSMS.second).toBe(10);
     expect(ruleSMS.minute).toBe(20);
     expect(ruleSMS.hour).toBe(13);
-    expect(ruleSMS.dayOfMonth).toBe(14);
+    expect(ruleSMS.date).toBe(14);
     expect(ruleSMS.month).toBe(6);
     expect(ruleSMS.dayOfWeek).toBe(0);
   });
