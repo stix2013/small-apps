@@ -59,106 +59,84 @@ vi.mock('../siminn', () => ({
 // ../prometheus
 vi.mock('../prometheus', () => ({
   gaugeSimInnApi: {
-    labels: vi.fn().mockReturnThis(), // or mockReturnValue({ set: vi.fn() })
-    set: vi.fn(), // if set is directly on gauge after labels().set()
+    labels: vi.fn().mockReturnThis(),
+    set: vi.fn(),
   },
   gaugeSimInnSMS: {
-    labels: vi.fn().mockReturnThis(), // or mockReturnValue({ set: vi.fn() })
-    set: vi.fn(), // if set is directly on gauge after labels().set()
+    labels: vi.fn().mockReturnThis(),
+    set: vi.fn(),
   },
 }));
 
-// ../rules
-vi.mock('../rules', () => ({
-  // Assuming createScheduleRules returns an object with specific rule strings
-  createScheduleRules: vi.fn(() => ({ ruleAPI: 'mock-rule-api-inline', ruleSMS: 'mock-rule-sms-inline' })),
+// ../create-schedule-rules (Corrected path)
+vi.mock('../create-schedule-rules', () => ({
+  createScheduleRules: vi.fn(), // Implementation will be provided in beforeEach
 }));
 
-// --- Import mocked modules to use vi.mocked() ---
-// schedule is often imported as default or specific named exports
-// Adjust based on actual usage in the file under test (schedule.ts)
-// Assuming 'schedule' is the default export from 'node-schedule' based on previous structure
-// import schedule from 'node-schedule'; // This would now be the mocked version
-// For named exports if used:
-// import { scheduleJob, gracefulShutdown } from 'node-schedule';
 
 // --- Test Suite ---
 describe('createSchedule', () => {
   let jobAPICallback: () => Promise<void>;
   let jobSMSCallback: () => Promise<void>;
-  // Store mocked rules for use in assertions
-  const capturedMockRules = { ruleAPI: 'mock-rule-api-captured', ruleSMS: 'mock-rule-sms-captured' };
+  // Define capturedMockRules with more realistic RecurrenceRule-like objects or actual instances
+  // For this test, the exact structure of rules might not be deeply inspected by scheduleJob mock,
+  // but it's good practice for them to resemble the expected types.
+  const capturedMockRules = {
+    ruleAPI: new schedule.RecurrenceRule(), // Using actual RecurrenceRule for type correctness
+    ruleSMS: new schedule.RecurrenceRule(), // Needs `import schedule from 'node-schedule'`
+  };
 
   beforeEach(() => {
     vi.resetAllMocks();
 
     // Re-initialize mocks that return other mocks or specific values for each test
     vi.mocked(createLoggers).mockReturnValue({
-        logSimInnApi: { error: vi.fn() }, // Fresh vi.fn() for error loggers
+        logSimInnApi: { error: vi.fn() },
         logSimInnSMS: { error: vi.fn() },
         logCdr: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
-    vi.mocked(gaugeSimInnApi.labels).mockReturnThis();
-    vi.mocked(gaugeSimInnApi.set).mockClear(); // Clear any previous calls to set
-    vi.mocked(gaugeSimInnSMS.labels).mockReturnThis();
-    vi.mocked(gaugeSimInnSMS.set).mockClear(); // Clear any previous calls to set
-    // Use the capturedMockRules for consistency in mock and assertions
-    // vi.mocked(createScheduleRules).mockReturnValue(capturedMockRules);
+    } as any); // Cast to any if createLoggers return type is complex or not fully typed here
 
+    vi.mocked(gaugeSimInnApi.labels).mockReturnThis();
+    vi.mocked(gaugeSimInnApi.set).mockClear();
+    vi.mocked(gaugeSimInnSMS.labels).mockReturnThis();
+    vi.mocked(gaugeSimInnSMS.set).mockClear();
+
+    // Set up the mock for createScheduleRules *before* calling createSchedule
+    // This ensures createSchedule uses the mocked rules.
+    vi.mocked(createScheduleRules).mockReturnValue(capturedMockRules);
 
     // Call createSchedule to set up the jobs
-    createSchedule();
+    createSchedule(); // Default scheduleName 'SIMINN-API' will be used
 
-    // Assert that scheduleJob was called with the correct parameters
-    // Accessing the mocked scheduleJob correctly:
-    // If 'node-schedule' default exports an object with scheduleJob:
-    const mockScheduleJobInstance = vi.mocked(schedule.scheduleJob);
+    const mockScheduleJob = vi.mocked(schedule.scheduleJob);
 
-    expect(mockScheduleJobInstance).toHaveBeenCalledTimes(2);
-    expect(mockScheduleJobInstance).toHaveBeenCalledWith(
-      'SIMINN-API',
+    expect(mockScheduleJob).toHaveBeenCalledTimes(2);
+    expect(mockScheduleJob).toHaveBeenCalledWith(
+      'SIMINN-API', // Default scheduleName used in createSchedule
       capturedMockRules.ruleAPI,
       expect.any(Function)
     );
-    expect(mockScheduleJobInstance).toHaveBeenCalledWith( // Corrected this line
+    expect(mockScheduleJob).toHaveBeenCalledWith(
       'SIMINN-SMS',
       capturedMockRules.ruleSMS,
       expect.any(Function)
     );
 
     // Capture the callbacks
-    // Find the API job callback by name 'jobAPI' (first argument to scheduleJob)
-    const mockScheduleJobRef = schedule.scheduleJob; // Get the correct ref
-    const apiJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'jobAPI');
-    // Find the SMS job callback by name 'jobSMS' (first argument to scheduleJob)
-    const smsJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'jobSMS');
-
-    if (apiJobCall && typeof apiJobCall[1] === 'function') { // apiJobCall[1] is the rule, apiJobCall[2] is the callback
-      jobAPICallback = apiJobCall[1] as () => Promise<void>;
+    // The callback is the 3rd argument (index 2) to schedule.scheduleJob
+    const apiJobCall = mockScheduleJob.mock.calls.find(call => call[0] === 'SIMINN-API');
+    if (apiJobCall && typeof apiJobCall[2] === 'function') {
+      jobAPICallback = apiJobCall[2] as () => Promise<void>;
     } else {
-      // If jobAPI wasn't found by its specific name, try to find SIMINN-API
-      // This is a fallback based on the new assertions, though jobAPI is the actual name used in schedule.ts
-      const siminnApiJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'SIMINN-API');
-      if (siminnApiJobCall && typeof siminnApiJobCall[1] === 'function') {
-        jobAPICallback = siminnApiJobCall[1] as () => Promise<void>;
-        console.warn("Found API job by 'SIMINN-API', ensure 'jobAPI' is the name used in schedule.ts for consistency with tests.");
-      } else {
-        throw new Error('API Job callback not captured. Ensure scheduleJob was called with "jobAPI" or "SIMINN-API" as the job name.');
-      }
+      throw new Error("API Job callback (for 'SIMINN-API') not captured or not a function.");
     }
 
-    if (smsJobCall && typeof smsJobCall[1] === 'function') { // smsJobCall[1] is rule, smsJobCall[2] is callback
-      jobSMSCallback = smsJobCall[1] as () => Promise<void>;
+    const smsJobCall = mockScheduleJob.mock.calls.find(call => call[0] === 'SIMINN-SMS');
+    if (smsJobCall && typeof smsJobCall[2] === 'function') {
+      jobSMSCallback = smsJobCall[2] as () => Promise<void>;
     } else {
-      // Fallback for SMS job similar to API job
-      const siminnSmsJobCall = vi.mocked(mockScheduleJobRef).mock.calls.find(call => call[0] === 'SIMINN-SMS');
-      if (siminnSmsJobCall && typeof siminnSmsJobCall[1] === 'function') {
-        jobSMSCallback = siminnSmsJobCall[1] as () => Promise<void>;
-        console.warn("Found SMS job by 'SIMINN-SMS', ensure 'jobSMS' is the name used in schedule.ts for consistency with tests.");
-      } else {
-        throw new Error('SMS Job callback not captured. Ensure scheduleJob was called with "jobSMS" or "SIMINN-SMS" as the job name.');
-      }
+      throw new Error("SMS Job callback (for 'SIMINN-SMS') not captured or not a function.");
     }
   });
 
