@@ -1,0 +1,12 @@
+{
+  "fileError": {
+    "defaultName": "FileError"
+  },
+  "processFile": {
+    "invalidCdr": "Ongeldig CDR bestand: {{fileName}}",
+    "emptyContent": "Bestand geen info: {{fileName}}",
+    "lineInfo": "Regel {{lineNumber}} msisdn: {{msisdn}} omlaag: {{download}} omhoog:{{upload}} tijdstempel: {{timestamp}} duur: {{duration}} offset: {{offset}}",
+    "lineInvalid": "Regel {{lineNumber}} is ongeldig",
+    "processed": "Verwerkt: {{duration}}ms, gestart: {{startTime}}"
+  }
+}

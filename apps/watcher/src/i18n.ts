@@ -6,7 +6,8 @@ i18n
   .use(Backend)
   .init({
     //lng: 'en', // If you want to set a default language, uncomment this line
-    fallbackLng: 'en',
+    fallbackLng: 'en', // Default language if the user language is not available
+    preload: ['en', 'nl'], // Preload languages
     //ns: ['translation'], // If you want to set a default namespace, uncomment this line
     //defaultNS: 'translation', // If you want to set a default namespace, uncomment this line
     backend: {
