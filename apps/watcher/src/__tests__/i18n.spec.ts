@@ -45,6 +45,16 @@ describe('i18n', () => {
 
     const expectedProcessed = 'Processed: 1000ms, Started: 1672574400000';
     expect(i18n.t('processFile.processed', { duration: '1000', startTime: 1672574400000 })).toBe(expectedProcessed);
+
+    // Test keys from watcher.ts translations
+    const path = '/some/test/path';
+    const accessTime = 1678886400000; // Example timestamp
+
+    expect(i18n.t('watcher.fileRemoved', { path })).toBe(`File ${path} has been removed`);
+    expect(i18n.t('watcher.fileModified', { path, accessTime })).toBe(`File ${path} has been modified ${accessTime}`);
+    expect(i18n.t('watcher.directoryAdded', { path })).toBe(`Directory ${path}`);
+    expect(i18n.t('watcher.directoryRemoved', { path })).toBe(`Directory ${path} has been removed`);
+    expect(i18n.t('watcher.waitForNewFiles')).toBe('Wait for new files');
   });
 
   it('should fallback to default language if a key is missing (optional test)', async () => {

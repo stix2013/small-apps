@@ -1,5 +1,6 @@
 import type { Stats } from 'node:fs'
 import { watch } from 'chokidar'
+import i18n from '@src/i18n';
 //
 // import { logCdr } from '@src/utils/logger'
 import { createLoggers } from '@src/utils'
@@ -21,22 +22,22 @@ export const createCDRWatcher = () => {
     })
     .on('unlink',
       (path: string) => {
-        logCdr.info(`File ${path} has been removed`)
+        logCdr.info(i18n.t('watcher.fileRemoved', { path }))
       }
     )
     .on('change', (path, stats) => {
       if (stats?.isFile()) {
-        logCdr.info(`File ${path} has been modified ${stats?.atimeMs}`)
+        logCdr.info(i18n.t('watcher.fileModified', { path, accessTime: stats?.atimeMs }))
       }
     })
     .on('addDir', (path) => {
-      logCdr.info(`Directory ${path}`)
+      logCdr.info(i18n.t('watcher.directoryAdded', { path }))
     })
     .on('unlinkDir', (path) => {
-      logCdr.info(`Directory ${path} has been removed`)
+      logCdr.info(i18n.t('watcher.directoryRemoved', { path }))
     })
     .on('ready', () => {
-      logCdr.info('Wait for new files')
+      logCdr.info(i18n.t('watcher.waitForNewFiles'))
       config.ready = true
     })
 

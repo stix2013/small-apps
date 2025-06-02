@@ -8,5 +8,12 @@
     "lineInfo": "Line {{lineNumber}} msisdn: {{msisdn}} down: {{download}} up:{{upload}} timestamp: {{timestamp}} duration: {{duration}} offset: {{offset}}",
     "lineInvalid": "Line {{lineNumber}} is invalid",
     "processed": "Processed: {{duration}}ms, Started: {{startTime}}"
+  },
+  "watcher": {
+    "fileRemoved": "File {{path}} has been removed",
+    "fileModified": "File {{path}} has been modified {{accessTime}}",
+    "directoryAdded": "Directory {{path}}",
+    "directoryRemoved": "Directory {{path}} has been removed",
+    "waitForNewFiles": "Wait for new files"
   }
 }
