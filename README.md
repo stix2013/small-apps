@@ -55,6 +55,8 @@ The following scripts are available in the root `package.json`:
 
 The `watcher` application (located in `apps/watcher`) is a key component of this project.
 
+A **CDR (Call Detail Record) file** is used for data transmission and defines the system's internal CDR transfer format. These files contain CDRs related to services like GPRS, voice, and SMS. The file format is UTF8, with fields separated by "|", and no header or tail record. CDR files follow specific naming rules and are transmitted frequently.
+
 ### Features
 
 *   **CDR File Watching**: Monitors specified directories for new or modified Call Detail Record (CDR) files.
