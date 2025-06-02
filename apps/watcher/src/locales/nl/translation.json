@@ -15,5 +15,31 @@
     "directoryAdded": "Map {{pad}}",
     "directoryRemoved": "Map {{path}} is verwijderd",
     "waitForNewFiles": "Wacht op nieuwe bestanden"
+  },
+  "app": {
+    "listening": "Watcher v{{version}} app luistert naar poort {{port}}",
+    "nodeVersion": "        gebruikt NodeJS {{version}}",
+    "started": "Applicatie gestart na i18n initialisatie.",
+    "error": {
+      "startup": "Fout tijdens het opstarten van de applicatie:"
+    },
+    "server": {
+      "closeError": "Fout:",
+      "closed": "Server is gesloten"
+    },
+    "shutdown": {
+      "starting": "Start graceful shutdown..."
+    },
+    "watcher": {
+      "closed": "Watcher is gesloten",
+      "closeError": "Fout bij het sluiten van de watcher:"
+    },
+    "schedule": {
+      "closed": "Schema is gesloten",
+      "closeError": "Fout bij het sluiten van het schema:"
+    },
+    "loggers": {
+      "closed": "Alle globale loggers gesloten."
+    }
   }
 }

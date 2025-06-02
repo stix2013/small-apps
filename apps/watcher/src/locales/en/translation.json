@@ -15,5 +15,31 @@
     "fileModified": "File {{path}} has been modified {{accessTime}}",
     "directoryAdded": "Directory {{path}}",
     "directoryRemoved": "Directory {{path}} has been removed"
+  },
+  "app": {
+    "listening": "Watcher v{{version}} app listens to port {{port}}",
+    "nodeVersion": "        using NodeJS {{version}}",
+    "started": "Application started after i18n initialization.",
+    "error": {
+      "startup": "Error during application startup:"
+    },
+    "server": {
+      "closeError": "Error:",
+      "closed": "Server is closed"
+    },
+    "shutdown": {
+      "starting": "Starting graceful shutdown..."
+    },
+    "watcher": {
+      "closed": "Watcher is closed",
+      "closeError": "Error closing watcher:"
+    },
+    "schedule": {
+      "closed": "Schedule is closed",
+      "closeError": "Error closing schedule:"
+    },
+    "loggers": {
+      "closed": "All global loggers closed."
+    }
   }
 }

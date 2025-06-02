@@ -7,6 +7,7 @@ import schedule from 'node-schedule'
 import * as Prometheus from 'prom-client'
 
 import config from './config'
+import i18n from './i18n';
 import { initializeI18n } from './i18n';
 import { loggers } from './utils/logger' // Import the loggers array
 import { createCDRWatcher } from './cdr'
@@ -38,15 +39,15 @@ async function main() {
   })
 
   server = app.listen(port, () => {
-    console.log(`Watcher v${process.env.npm_package_version} app listens to port ${port}`)
-    console.log(`        using NodeJS ${process.version}`)
+    console.log(i18n.t('app.listening', { version: process.env.npm_package_version, port }))
+    console.log(i18n.t('app.nodeVersion', { version: process.version }))
   })
 
-  console.log('Application started after i18n initialization.');
+  console.log(i18n.t('app.started'));
 }
 
 main().catch(error => {
-  console.error("Error during application startup:", error);
+  console.error(i18n.t('app.error.startup'), error);
   process.exit(1);
 });
 
@@ -54,24 +55,24 @@ process.on('SIGINT', () => {
   if (server) {
     server.close((err?: Error) => {
       if (err) {
-        console.log(`Error: ${err.message}`)
+        console.log(i18n.t('app.server.closeError'), err.message)
       } else {
-        console.log('Server is closed')
+        console.log(i18n.t('app.server.closed'))
       }
     })
   }
 
   // Close all resources gracefully
   const gracefulShutdownFlow = async () => {
-    console.log('Starting graceful shutdown...');
+    console.log(i18n.t('app.shutdown.starting'));
 
     // Close watcher
     if (watcher) {
       try {
         await watcher.close();
-        console.log('Watcher is closed');
+        console.log(i18n.t('app.watcher.closed'));
       } catch (err) {
-        console.error(`Error closing watcher: ${(err as Error).message}`);
+        console.error(i18n.t('app.watcher.closeError'), (err as Error).message);
       }
     }
 
@@ -79,9 +80,9 @@ process.on('SIGINT', () => {
     if (jobs) { // Ensure jobs object exists
       try {
         await schedule.gracefulShutdown();
-        console.log('Schedule is closed');
+        console.log(i18n.t('app.schedule.closed'));
       } catch (err) {
-        console.error(`Error closing schedule: ${(err as Error).message}`);
+        console.error(i18n.t('app.schedule.closeError'), (err as Error).message);
       }
     }
 
@@ -92,7 +93,7 @@ process.on('SIGINT', () => {
           logger.close();
         }
       });
-      console.log('All global loggers closed.');
+      console.log(i18n.t('app.loggers.closed'));
     }
 
     // Finally, exit the process
