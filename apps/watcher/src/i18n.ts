@@ -22,10 +22,6 @@ export async function initializeI18n() {
           escapeValue: false, // React already safes from xss
         },
       });
-    console.log('[i18n] Initialized i18n (after await).');
-    console.log('[i18n] Detected/Set language (after await):', i18n.language);
-    console.log('[i18n] Language fallback order (after await):', i18n.languages);
-    console.log('[i18n] Initial configuration used language (config object):', config.appLanguage);
     // return i18n; // Optional: can be useful
   } catch (error) {
     console.error('[i18n] Error during initialization:', error);

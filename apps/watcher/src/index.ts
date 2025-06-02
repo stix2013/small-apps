@@ -7,22 +7,21 @@ import schedule from 'node-schedule'
 import * as Prometheus from 'prom-client'
 
 import config from './config'
-import i18n, { initializeI18n } from './i18n';
+import { initializeI18n } from './i18n';
 import { loggers } from './utils/logger' // Import the loggers array
 import { createCDRWatcher } from './cdr'
 //
+import type { ScheduledJobs } from './monitoring';
 import { createSchedule } from './monitoring'
+import type { FSWatcher } from 'chokidar';
+import type { Server } from 'net';
 
-let server: any;
-let watcher: any;
-let jobs: any;
+let server: Server;
+let watcher: FSWatcher;
+let jobs: ScheduledJobs;
 
 async function main() {
   await initializeI18n();
-
-  // Test i18n
-  console.log('[i18n TEST] Trying to translate "watcher.waitForNewFiles":', i18n.t('watcher.waitForNewFiles'));
-  console.log('[i18n TEST] Trying to translate "nonexistent.key":', i18n.t('nonexistent.key'));
 
   jobs = createSchedule()
 

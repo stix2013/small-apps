@@ -45,6 +45,6 @@
     "@yellow-mobile/types": "workspace:*",
     "currency-symbol-map": "^5.1.0",
     "unbuild": "^3.5.0",
-    "vitest": "3.1.4"
+    "vitest": "3.2.0"
   }
 }
