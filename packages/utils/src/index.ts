@@ -1,4 +1,3 @@
-export * from './const'
 export * from './address-google-map'
 export * from './capitalized'
 export * from './check-non-null-or-defined'

@@ -25,7 +25,8 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "scripts"
+    "scripts",
+    "src/currency-symbols.json"
   ],
   "scripts": {
     "dev": "vitest dev",
@@ -34,7 +35,9 @@
     "build": "unbuild",
     "prepack": "pnpm build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@yellow-mobile/const": "workspace:*"
+  },
   "peerDependencies": {
     "consola": "^3.4.0"
   },

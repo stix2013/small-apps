@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { timeout } from '../src/timeout'
-import { REFRESH_TIME_PERIOD } from '../src/const/refresh'
+import { REFRESH_TIME_PERIOD } from '@yellow-mobile/const';
 
 const { mockLoggerInfo } = vi.hoisted(() => {
   return { mockLoggerInfo: vi.fn() };
@@ -10,7 +10,7 @@ const { mockLoggerInfo } = vi.hoisted(() => {
 vi.mock('../src/use-logger', () => ({
   useLogger: vi.fn(() => ({
     info: mockLoggerInfo, // Use the externally defined mockLoggerInfo
-    error: vi.fn(), 
+    error: vi.fn(),
     warn: vi.fn(),
   })),
 }));
@@ -31,7 +31,7 @@ describe('timeout', () => {
     vi.advanceTimersByTime(100) // Advance time by 100ms
     const currTime = Date.now()
     const period = 200
-    
+
     expect(timeout(prevTime, currTime, period)).toBe(false)
     expect(mockLoggerInfo).toHaveBeenCalledWith(false, 100, period)
   })
@@ -59,14 +59,14 @@ describe('timeout', () => {
   it('should use Date.now() for currTime if not provided', () => {
     const prevTime = Date.now() // t = 0
     vi.advanceTimersByTime(REFRESH_TIME_PERIOD - 100) // t = REFRESH_TIME_PERIOD - 100
-    
-    expect(timeout(prevTime)).toBe(false) 
+
+    expect(timeout(prevTime)).toBe(false)
     expect(mockLoggerInfo).toHaveBeenCalledWith(false, REFRESH_TIME_PERIOD - 100, REFRESH_TIME_PERIOD)
 
     // mockLoggerInfo.mockClear(); // Already cleared by beforeEach
     vi.advanceTimersByTime(200) // t = REFRESH_TIME_PERIOD + 100
-    
-    expect(timeout(prevTime)).toBe(true) 
+
+    expect(timeout(prevTime)).toBe(true)
     // The mock will have been called again, ensure to check the latest relevant call or use toHaveBeenCalledTimes with specific args
     expect(mockLoggerInfo).toHaveBeenCalledWith(true, REFRESH_TIME_PERIOD + 100, REFRESH_TIME_PERIOD)
   })
@@ -79,10 +79,10 @@ describe('timeout', () => {
     expect(timeout(prevTime, currTime)).toBe(true)
     expect(mockLoggerInfo).toHaveBeenCalledWith(true, REFRESH_TIME_PERIOD, REFRESH_TIME_PERIOD)
   })
-  
+
   it('should handle prevTime being much older than currTime', () => {
-    const prevTime = Date.now() 
-    vi.advanceTimersByTime(REFRESH_TIME_PERIOD * 5) 
+    const prevTime = Date.now()
+    vi.advanceTimersByTime(REFRESH_TIME_PERIOD * 5)
     const currTime = Date.now()
 
     expect(timeout(prevTime, currTime, REFRESH_TIME_PERIOD)).toBe(true)
@@ -90,9 +90,9 @@ describe('timeout', () => {
   })
 
   it('should handle currTime being slightly before prevTime (returns false, diff is negative)', () => {
-    const currTimeFixed = Date.now() 
-    vi.advanceTimersByTime(1000)    
-    const prevTimeFixed = Date.now() 
+    const currTimeFixed = Date.now()
+    vi.advanceTimersByTime(1000)
+    const prevTimeFixed = Date.now()
 
     expect(timeout(prevTimeFixed, currTimeFixed, REFRESH_TIME_PERIOD)).toBe(false)
     expect(mockLoggerInfo).toHaveBeenCalledWith(false, -1000, REFRESH_TIME_PERIOD)
