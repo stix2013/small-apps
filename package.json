@@ -39,6 +39,7 @@
     "cleanup:dist": "rimraf -v -g **/dist",
     "cleanup:modules": "rimraf -v -g **/node_modules",
     "deploy:watcher": "npx rimraf dist/watcher && pnpm prepack && pnpm --filter=watcher deploy --prod ./dist/watcher",
+    "deploy:watcher:dev": "npx rimraf dist/watcher && pnpm prepack && pnpm --filter=watcher deploy ./dist/watcher",
     "prepack": "FORCE_COLOR=3 pnpm -r prepack",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

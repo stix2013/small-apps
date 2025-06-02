@@ -9,7 +9,7 @@
     "lineInvalid": "Regel {{lineNumber}} is ongeldig",
     "processed": "Verwerkt: {{duration}}ms, gestart: {{startTime}}"
   },
-    "watcher": {
+  "watcher": {
     "fileRemoved": "Bestand {{path}} is verwijderd",
     "fileModified": "Bestand {{path}} is gewijzigd {{accessTime}}",
     "directoryAdded": "Map {{pad}}",

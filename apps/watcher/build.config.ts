@@ -7,6 +7,14 @@ export default defineBuildConfig({
   failOnWarn: false,
   clean: true,
   externals: ['@yellow-mobile/types'],
+  entries: [
+    'src/index',
+    {
+      builder: 'copy',
+      input: 'src/locales',
+      outDir: 'dist/locales',
+    },
+  ],
   rollup: {
     resolve: {
       dedupe: ['@yellow-mobile/types'],
@@ -17,6 +25,7 @@ export default defineBuildConfig({
     esbuild: {
       minify: true,
     },
+    emitCJS: true,
   },
   alias: {
     '@src': path.resolve(__dirname, 'src'),

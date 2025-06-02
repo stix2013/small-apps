@@ -10,10 +10,10 @@
     "processed": "Processed: {{duration}}ms, Started: {{startTime}}"
   },
   "watcher": {
+    "waitForNewFiles": "Wait for new files",
     "fileRemoved": "File {{path}} has been removed",
     "fileModified": "File {{path}} has been modified {{accessTime}}",
     "directoryAdded": "Directory {{path}}",
-    "directoryRemoved": "Directory {{path}} has been removed",
-    "waitForNewFiles": "Wait for new files"
+    "directoryRemoved": "Directory {{path}} has been removed"
   }
 }
