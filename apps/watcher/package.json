@@ -6,12 +6,13 @@
   "private": true,
   "dependencies": {
     "@yellow-mobile/logger": "workspace:*",
-
     "axios": "^1.9.0",
     "chokidar": "^4.0.3",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "i18next": "^25.2.1",
+    "i18next-fs-backend": "^2.6.0",
     "node-schedule": "^2.1.1",
     "pathe": "^2.0.3",
     "prom-client": "^15.1.3",

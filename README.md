@@ -106,6 +106,10 @@ Based on the structure defined in the sources, we can describe the data from thi
 *   `typecheck`: Type-checks the `watcher` application code.
 *   `test`: Runs tests for the `watcher` application using Vitest.
 
+## Internationalization (i18n)
+
+The `@yellow-mobile/watcher` application now supports internationalization using `i18next`. Translations are managed in JSON files located in `apps/watcher/src/locales`. The default language is English.
+
 ## Contributing
 
 Contributions are welcome! If you'd like to contribute to this project, please feel free to fork the repository and submit a pull request.
