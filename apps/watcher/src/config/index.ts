@@ -2,11 +2,17 @@ import { config } from 'dotenv'
 
 config()
 
+console.log('[CONFIG] Raw APP_NAME:', process.env.APP_NAME);
+console.log('[CONFIG] Raw APP_LANGUAGE:', process.env.APP_LANGUAGE);
+
 const argv = process.argv
 const _path = argv[2] || __dirname
 
 const appName = process.env.APP_NAME || 'Watcher'
 const appLanguage = process.env.APP_LANGUAGE || 'en'
+
+console.log('[CONFIG] Effective appName:', appName);
+console.log('[CONFIG] Effective appLanguage:', appLanguage);
 
 const ready = process.env.RETRIEVE_ALL === 'true' || false
 
