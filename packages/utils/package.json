@@ -25,7 +25,8 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "scripts"
+    "scripts",
+    "src/currency-symbols.json"
   ],
   "scripts": {
     "dev": "vitest dev",
