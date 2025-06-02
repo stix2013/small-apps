@@ -1,4 +1,5 @@
 import type { Stats } from 'node:fs'
+import i18n from '@src/i18n';
 //
 import { postData } from '@src/plugins/post-data'
 import type { CDRFileInfo, CDRLine } from '@yellow-mobile/types'
@@ -46,7 +47,7 @@ export const processFile = (path: string, stats: Stats) => {
 
     if (err instanceof FileError) {
       const { logCdr } = createLoggers()
-      logCdr.error(err.message)
+      logCdr.error(i18n.t('processFile.invalidCdr', { fileName: file.name || path }));
       cdrFile.status = 'ERROR'
       postData(cdrFile, lines)
     }
@@ -59,7 +60,7 @@ export const processFile = (path: string, stats: Stats) => {
   const logger = logCdrFilename(file.name)
 
   if (!data || data.length === 0) {
-    logger.warn('File no info');
+    logger.warn(i18n.t('processFile.emptyContent', { fileName: file.name }));
     cdrFile.status = 'EMPTY_CONTENT';      // Set the status
     cdrFile.lineCount = 0;               // Ensure line counts are explicitly zero
     cdrFile.lineInvalidCount = 0;
@@ -85,19 +86,14 @@ export const processFile = (path: string, stats: Stats) => {
       lines.push(cdrLine)
       totalDownload += (cdrLine.volumeDownload || 0);
       totalUpload += (cdrLine.volumeUpload || 0);
-      logger.info(`Line ${index + 1} msisdn: ${cdrLine.msisdn} ` +
-        `down: ${cdrLine.volumeDownload} ` +
-        `up:${cdrLine.volumeUpload} ` +
-        `timestamp: ${cdrLine.eventTimestamp} ` +
-        `duration: ${cdrLine.eventDuration} ` +
-        `offset: ${cdrLine.nulli}`)
+      logger.info(i18n.t('processFile.lineInfo', { lineNumber: index + 1, msisdn: cdrLine.msisdn, download: cdrLine.volumeDownload, upload: cdrLine.volumeUpload, timestamp: cdrLine.eventTimestamp, duration: cdrLine.eventDuration, offset: cdrLine.nulli }));
 
       setVolumeDataMsisdnGauge(file, cdrLine)
     } else {
       // lines.push(cdrLine); // <--- THIS LINE IS THE BUG, REMOVED
       totalInvalidDownload += (cdrLine.volumeDownload || 0);
       totalInvalidUpload += (cdrLine.volumeUpload || 0);
-      logger.error(`Line ${index + 1} is invalid`)
+      logger.error(i18n.t('processFile.lineInvalid', { lineNumber: index + 1 }));
       cdrFile.lineInvalidCount++
     }
   })
@@ -123,7 +119,7 @@ export const processFile = (path: string, stats: Stats) => {
     })
   }
 
-  logger.info(`Processed: ${processDuration}, ${startProcessTime}`)
+  logger.info(i18n.t('processFile.processed', { duration: processDuration, startTime: startProcessTime }));
   logger.end()
   return lines
 }

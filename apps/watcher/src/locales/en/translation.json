@@ -1,0 +1,12 @@
+{
+  "fileError": {
+    "defaultName": "FileError"
+  },
+  "processFile": {
+    "invalidCdr": "Invalid CDR file: {{fileName}}",
+    "emptyContent": "File no info: {{fileName}}",
+    "lineInfo": "Line {{lineNumber}} msisdn: {{msisdn}} down: {{download}} up:{{upload}} timestamp: {{timestamp}} duration: {{duration}} offset: {{offset}}",
+    "lineInvalid": "Line {{lineNumber}} is invalid",
+    "processed": "Processed: {{duration}}ms, Started: {{startTime}}"
+  }
+}
