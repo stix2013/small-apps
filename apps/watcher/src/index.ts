@@ -7,40 +7,60 @@ import schedule from 'node-schedule'
 import * as Prometheus from 'prom-client'
 
 import config from './config'
+import i18n, { initializeI18n } from './i18n';
 import { loggers } from './utils/logger' // Import the loggers array
 import { createCDRWatcher } from './cdr'
 //
 import { createSchedule } from './monitoring'
 
-const jobs = createSchedule()
+let server: any;
+let watcher: any;
+let jobs: any;
 
-// watch CDR files from FTP
-const watcher = createCDRWatcher()
+async function main() {
+  await initializeI18n();
 
-// express
-const app = express()
-const port = config.expressPort || 3000
+  // Test i18n
+  console.log('[i18n TEST] Trying to translate "watcher.waitForNewFiles":', i18n.t('watcher.waitForNewFiles'));
+  console.log('[i18n TEST] Trying to translate "nonexistent.key":', i18n.t('nonexistent.key'));
 
-app.get('/metrics', async (_, res) => {
-  res.set('Content-Type', Prometheus.register.contentType)
-  res.end(await Prometheus.register.metrics())
-})
+  jobs = createSchedule()
 
-const server = app.listen(port, () => {
-  console.log(`Watcher v${process.env.npm_package_version} app listens to port ${port}`)
-  console.log(`        using NodeJS ${process.version}`)
-})
+  // watch CDR files from FTP
+  watcher = createCDRWatcher()
 
-export { app, server };
+  // express
+  const app = express()
+  const port = config.expressPort || 3000
+
+  app.get('/metrics', async (_, res) => {
+    res.set('Content-Type', Prometheus.register.contentType)
+    res.end(await Prometheus.register.metrics())
+  })
+
+  server = app.listen(port, () => {
+    console.log(`Watcher v${process.env.npm_package_version} app listens to port ${port}`)
+    console.log(`        using NodeJS ${process.version}`)
+  })
+
+  console.log('Application started after i18n initialization.');
+}
+
+main().catch(error => {
+  console.error("Error during application startup:", error);
+  process.exit(1);
+});
 
 process.on('SIGINT', () => {
-  server.close((err?: Error) => {
-    if (err) {
-      console.log(`Error: ${err.message}`)
-    } else {
-      console.log('Server is closed')
-    }
-  })
+  if (server) {
+    server.close((err?: Error) => {
+      if (err) {
+        console.log(`Error: ${err.message}`)
+      } else {
+        console.log('Server is closed')
+      }
+    })
+  }
 
   // Close all resources gracefully
   const gracefulShutdownFlow = async () => {
@@ -81,7 +101,11 @@ process.on('SIGINT', () => {
   };
 
   // Initiate graceful shutdown.
-  // Using a separate function helps manage the async flow and ensures
-  // process.exit is called only after all cleanup attempts.
   gracefulShutdownFlow();
 })
+
+// For testing purposes, if app and server are needed by other modules.
+// However, direct export might be problematic with async main.
+// Consider alternative patterns if other modules need to import these.
+// For now, removing them from direct export as they are initialized in main().
+// export { app, server };
