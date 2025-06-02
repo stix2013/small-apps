@@ -1,11 +1,11 @@
 import i18n from 'i18next';
 import Backend from 'i18next-fs-backend';
 import path from 'node:path';
-
+import config from './config';
 i18n
   .use(Backend)
   .init({
-    //lng: 'en', // If you want to set a default language, uncomment this line
+    lng: config.appLanguage, // If you want to set a default language, uncomment this line
     fallbackLng: 'en', // Default language if the user language is not available
     preload: ['en', 'nl'], // Preload languages
     //ns: ['translation'], // If you want to set a default namespace, uncomment this line

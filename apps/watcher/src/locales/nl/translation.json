@@ -8,5 +8,12 @@
     "lineInfo": "Regel {{lineNumber}} msisdn: {{msisdn}} omlaag: {{download}} omhoog:{{upload}} tijdstempel: {{timestamp}} duur: {{duration}} offset: {{offset}}",
     "lineInvalid": "Regel {{lineNumber}} is ongeldig",
     "processed": "Verwerkt: {{duration}}ms, gestart: {{startTime}}"
+  },
+    "watcher": {
+    "fileRemoved": "Bestand {{path}} is verwijderd",
+    "fileModified": "Bestand {{path}} is gewijzigd {{accessTime}}",
+    "directoryAdded": "Map {{pad}}",
+    "directoryRemoved": "Map {{path}} is verwijderd",
+    "waitForNewFiles": "Wacht op nieuwe bestanden"
   }
 }

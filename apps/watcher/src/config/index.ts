@@ -5,6 +5,9 @@ config()
 const argv = process.argv
 const _path = argv[2] || __dirname
 
+const appName = process.env.APP_NAME || 'Watcher'
+const appLanguage = process.env.APP_LANGUAGE || 'en'
+
 const ready = process.env.RETRIEVE_ALL === 'true' || false
 
 const baseUrl = process.env.BASE_URL || 'https://admin.yellowmobile.nl'
@@ -21,9 +24,11 @@ const simInnSMSHealthcheck = process.env.SIMINN_SMS_HEALTHCHECK || '/smap/health
 const simInnSMSUser = process.env.SIMINN_SMS_USER || ''
 const simInnSMSPassword = process.env.SIMINN_SMS_PASSWORD || ''
 
-console.log(`        path ${process.env.WATCHER_PATH}`)
+// console.log(`        path ${process.env.WATCHER_PATH}`)
 
 export default {
+  appName,
+  appLanguage,
   path: process.env.WATCHER_PATH || _path,
   ready,
   baseUrl,

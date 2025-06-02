@@ -20,7 +20,7 @@
     "yellow mobile apps type definitions"
   ],
   "license": "ISC",
-  "types": "dist/index.d.ts",
+  "types": "dist/index.d.mts",
   "files": [
     "dist"
   ],

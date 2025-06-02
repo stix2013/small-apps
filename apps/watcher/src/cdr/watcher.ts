@@ -11,6 +11,8 @@ import { options as optionsWatcher } from './options'
 export const createCDRWatcher = () => {
   const { logCdr } = createLoggers()
   const watcher = watch(config.path, optionsWatcher)
+  logCdr.info('test');
+  logCdr.info(i18n.language);
 
   watcher
     .on('add', (path: string, stats?: Stats) => {
