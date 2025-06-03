@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { timeout } from '../src/timeout'
-import { REFRESH_TIME_PERIOD } from '@yellow-mobile/const';
+import { REFRESH_TIME_PERIOD } from '@yellow-mobile/const'
 
 const { mockLoggerInfo } = vi.hoisted(() => {
   return { mockLoggerInfo: vi.fn() };

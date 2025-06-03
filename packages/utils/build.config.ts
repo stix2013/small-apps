@@ -20,7 +20,7 @@ export default defineBuildConfig([
     name: 'minified',
     declaration: true,
     clean: true,
-    externals: ['@yellow-mobile/const', '@yellow-mobile/types'],
+    externals: ['@yellow-mobile/types', '@yellow-mobile/const'],
     outDir: 'dist/minified',
     entries: [
       // test
