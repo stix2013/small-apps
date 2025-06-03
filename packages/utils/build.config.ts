@@ -13,8 +13,8 @@ export default defineBuildConfig([
       'src/dates/index.ts',
       {
         builder: 'copy',
-        input: 'src/currency-symbols.json',
-        outDir: 'dist/currency-symbols.json',
+        input: 'src/assets/',
+        outDir: 'dist/assets/',
       },
     ],
     rollup: {

@@ -1,23 +1,5 @@
 import type { CurrencySymbol } from '@yellow-mobile/types'
-import symbols from './currency-symbols.json'
-
-// const curSymbols: CurrencySymbol[] = [
-//   {
-//     currency: 'Euro Member Countries',
-//     code: 'EUR',
-//     symbol: '€'
-//   },
-//   {
-//     currency: 'United States Dollar',
-//     code: 'USD',
-//     symbol: '$'
-//   },
-//   {
-//     currency: 'Iceland Krona',
-//     code: 'ISK',
-//     symbol: 'kr'
-//   }
-// ]
+import symbols from './assets/currency-symbols.json'
 
 const curSymbols: CurrencySymbol[] = symbols
 
