@@ -1,4 +1,3 @@
-export * from './address-google-map'
 export * from './capitalized'
 export * from './check-non-null-or-defined'
 export * from './create-init-list-state'
