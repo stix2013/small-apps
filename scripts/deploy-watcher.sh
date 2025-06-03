@@ -7,10 +7,8 @@ pnpm cleanup
 pnpm install
 
 # build
-pnpm turbo run build
+pnpm prepack && pnpm --filter @yellow-mobile/watcher build:prod
 
 # deploy
 pnpm --filter @yellow-mobile/watcher deploy --prod $PWD/dist/watcher
 
-# mkdir -p $PWD/dist/watcher/prisma
-# cp -R $PWD/packages/database/prisma/* $PWD/dist/watcher/prisma/

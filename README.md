@@ -24,8 +24,8 @@ This monorepo is organized into two main directories:
 
 Before you begin, ensure you have the following installed:
 
-*   Node.js (>=16)
-*   pnpm (>=7)
+*   Node.js (>=18)
+*   pnpm (>=8)
 
 ## Getting Started
 
@@ -36,6 +36,19 @@ git clone <repository-url> # Replace <repository-url> with the actual URL
 cd yellow-mobile
 pnpm install
 ```
+
+## Built With
+
+This project leverages a range of modern technologies and tools to ensure efficient development, robust performance, and maintainable code. Key components include:
+
+*   **Node.js**: A JavaScript runtime environment for server-side and build tooling.
+*   **TypeScript**: A superset of JavaScript that adds static typing, enhancing code quality and developer productivity.
+*   **pnpm**: A fast, disk space-efficient package manager, used with its **workspaces** feature to manage the monorepo structure.
+*   **Vitest**: A blazing fast unit test framework powered by Vite, used for running tests across the project.
+*   **ESLint**: A pluggable and configurable linter tool for identifying and reporting on patterns in JavaScript and TypeScript.
+*   **Express.js**: A minimal and flexible Node.js web application framework, used for the API in the `watcher` application.
+*   **Winston**: A versatile logging library, utilized in the `@yellow-mobile/logger` package for robust logging capabilities.
+*   **`unbuild`**: A unified JavaScript build system, employed for building the individual packages within the monorepo.
 
 ## Available Scripts
 
@@ -50,6 +63,33 @@ The following scripts are available in the root `package.json`:
 *   `typecheck`: Runs TypeScript to check for type errors in the entire project.
 *   `lint`: Lints the codebase using ESLint.
 *   `lint:fix`: Lints the codebase and automatically fixes fixable issues.
+
+## Running Tests
+
+This project uses [Vitest](https://vitest.dev/) as the testing framework.
+
+### Running All Tests
+
+To run all tests for every package in the monorepo, use the following command from the root directory:
+
+```bash
+pnpm test -r
+```
+
+Alternatively, you might use:
+
+```bash
+pnpm -r test
+```
+
+### Running Tests for Individual Packages
+
+To run tests for a specific package, navigate to the package's directory and run its test script. For example, to run tests for the `@yellow-mobile/logger` package:
+
+```bash
+cd packages/logger
+pnpm test
+```
 
 ## Watcher Application
 
@@ -105,6 +145,30 @@ Based on the structure defined in the sources, we can describe the data from thi
 *   `inspect`: Runs the application in debug mode.
 *   `typecheck`: Type-checks the `watcher` application code.
 *   `test`: Runs tests for the `watcher` application using Vitest.
+
+## Deployment
+
+Currently, deployment instructions and scripts are primarily focused on the `watcher` application.
+
+### Using `deploy:watcher` (Root Script)
+
+The root `package.json` provides a `deploy:watcher` script for deploying the watcher application. This script performs the following steps:
+
+1.  **Cleans**: Removes the previous build output from `dist/watcher`.
+2.  **Prepack**: Runs `pnpm prepack` which typically builds all package dependencies.
+3.  **Build Production Watcher**: Executes `pnpm build:prod` specifically for the `apps/watcher` application to create a production-ready build.
+4.  **Deploy Watcher**: Runs the command `pnpm --filter=watcher deploy --prod ./dist/watcher`.
+
+**Note:** The final `deploy` command within this script likely relies on an external command or an environment-specific setup that is not part of this repository. This step is responsible for taking the built watcher application from `./dist/watcher` and deploying it to the target environment.
+
+### Using `scripts/deploy-watcher.sh`
+
+A more comprehensive deployment method is available via the `scripts/deploy-watcher.sh` shell script. This script offers a broader approach, which includes:
+
+- Running `pnpm install` to ensure all dependencies are up-to-date.
+- Similar to `deploy:watcher`, it culminates in a deployment step that is environment-specific.
+
+It is recommended to inspect this script for a full understanding of its operations.
 
 ## Internationalization (i18n)
 
