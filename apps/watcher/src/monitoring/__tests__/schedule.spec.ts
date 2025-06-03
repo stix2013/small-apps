@@ -34,17 +34,21 @@ vi.mock('@src/config', () => ({
 }));
 
 // @src/utils/logger
-vi.mock('@src/utils/logger', () => ({
-  createLoggers: vi.fn().mockReturnValue({
-    logSimInnApi: { error: vi.fn() },
-    logSimInnSMS: { error: vi.fn() },
-    // Add other loggers if createLoggers returns them
-    logCdr: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
-  }),
+vi.mock('@src/utils/logger', () => {
+  const mocLoggers: Map<string, any> = new Map();
+  mocLoggers.set('API', { error: vi.fn() });
+  mocLoggers.set('SMS', { error: vi.fn() });
+  mocLoggers.set('CDR', { info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+
+
   // If 'loggers' array is directly imported and used
-  loggers: [{ close: vi.fn() }, { close: vi.fn() }],
-  logCdrFilename: vi.fn().mockReturnValue({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), end: vi.fn() })
-}));
+  return {
+  // Mock createLoggers to return a Map with mock logger methods
+    createLoggers: vi.fn().mockReturnValue(mocLoggers),
+    loggers: [{ close: vi.fn() }, { close: vi.fn() }],
+    logCdrFilename: vi.fn().mockReturnValue({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), end: vi.fn() })
+  }
+});
 
 // ../siminn
 vi.mock('../siminn', () => ({
@@ -90,12 +94,12 @@ describe('createSchedule', () => {
     vi.resetAllMocks();
 
     // Re-initialize mocks that return other mocks or specific values for each test
-    vi.mocked(createLoggers).mockReturnValue({
-        logSimInnApi: { error: vi.fn() },
-        logSimInnSMS: { error: vi.fn() },
-        logCdr: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any); // Cast to any if createLoggers return type is complex or not fully typed here
+    const mocLoggers: Map<string, any> = new Map();
+    mocLoggers.set('API', { error: vi.fn() });
+    mocLoggers.set('SMS', { error: vi.fn() });
+    mocLoggers.set('CDR', { info: vi.fn(), warn: vi.fn(), error: vi.fn() });
+
+    vi.mocked(createLoggers).mockReturnValue(mocLoggers); // Cast to any if createLoggers return type is complex or not fully typed here
 
     vi.mocked(gaugeSimInnApi.labels).mockReturnThis();
     vi.mocked(gaugeSimInnApi.set).mockClear();
@@ -126,15 +130,15 @@ describe('createSchedule', () => {
     // Capture the callbacks
     // The callback is the 3rd argument (index 2) to schedule.scheduleJob
     const apiJobCall = mockScheduleJob.mock.calls.find(call => call[0] === 'SIMINN-API');
-    if (apiJobCall && typeof apiJobCall[2] === 'function') {
-      jobAPICallback = apiJobCall[2] as () => Promise<void>;
+    if (apiJobCall && typeof apiJobCall[1] === 'function') {
+      jobAPICallback = apiJobCall[1] as () => Promise<void>;
     } else {
       throw new Error("API Job callback (for 'SIMINN-API') not captured or not a function.");
     }
 
     const smsJobCall = mockScheduleJob.mock.calls.find(call => call[0] === 'SIMINN-SMS');
-    if (smsJobCall && typeof smsJobCall[2] === 'function') {
-      jobSMSCallback = smsJobCall[2] as () => Promise<void>;
+    if (smsJobCall && typeof smsJobCall[1] === 'function') {
+      jobSMSCallback = smsJobCall[1] as () => Promise<void>;
     } else {
       throw new Error("SMS Job callback (for 'SIMINN-SMS') not captured or not a function.");
     }
@@ -150,7 +154,7 @@ describe('createSchedule', () => {
       expect(simInnApi.get).toHaveBeenCalledWith(config.simInnApiPathPing);
       expect(gaugeSimInnApi.labels).toHaveBeenCalledWith({ status: 'OK' });
       expect(gaugeSimInnApi.set).toHaveBeenCalledWith(200);
-      expect(vi.mocked(createLoggers)().logSimInnApi.error).not.toHaveBeenCalled();
+      expect(vi.mocked(createLoggers)().get('API')?.error).not.toHaveBeenCalled();
     });
 
     it('should handle Axios error during API call', async () => {
@@ -166,7 +170,7 @@ describe('createSchedule', () => {
       expect(simInnApi.get).toHaveBeenCalledWith(config.simInnApiPathPing);
       expect(gaugeSimInnApi.labels).toHaveBeenCalledWith({ status: 'Not Found' });
       expect(gaugeSimInnApi.set).toHaveBeenCalledWith(404);
-      expect(vi.mocked(createLoggers)().logSimInnApi.error).toHaveBeenCalledWith(axiosError.message);
+      expect(vi.mocked(createLoggers)().get('API')?.error).toHaveBeenCalledWith(axiosError.message);
     });
 
     it('should handle non-Axios error during API call', async () => {
@@ -178,7 +182,7 @@ describe('createSchedule', () => {
       expect(simInnApi.get).toHaveBeenCalledWith(config.simInnApiPathPing);
       expect(gaugeSimInnApi.labels).toHaveBeenCalledWith({ status: 'Error' });
       expect(gaugeSimInnApi.set).toHaveBeenCalledWith(0);
-      expect(vi.mocked(createLoggers)().logSimInnApi.error).toHaveBeenCalledWith(genericError.message);
+      expect(vi.mocked(createLoggers)().get('API')?.error).toHaveBeenCalledWith(genericError.message);
     });
   });
 
@@ -192,7 +196,7 @@ describe('createSchedule', () => {
       expect(simInnSMS.get).toHaveBeenCalledWith(config.simInnSMSHealthcheck);
       expect(gaugeSimInnSMS.labels).toHaveBeenCalledWith({ status: 'SMS OK' });
       expect(gaugeSimInnSMS.set).toHaveBeenCalledWith(1); // 1 for success
-      expect(vi.mocked(createLoggers)().logSimInnSMS.error).not.toHaveBeenCalled();
+      expect(vi.mocked(createLoggers)().get('SMS')?.error).not.toHaveBeenCalled();
     });
 
     it('should handle error during SMS check', async () => {
@@ -204,7 +208,7 @@ describe('createSchedule', () => {
       expect(simInnSMS.get).toHaveBeenCalledWith(config.simInnSMSHealthcheck);
       expect(gaugeSimInnSMS.labels).toHaveBeenCalledWith({ status: 'Error' });
       expect(gaugeSimInnSMS.set).toHaveBeenCalledWith(0); // 0 for error
-      expect(vi.mocked(createLoggers)().logSimInnSMS.error).toHaveBeenCalledWith(smsError.message);
+      expect(vi.mocked(createLoggers)().get('SMS')?.error).toHaveBeenCalledWith(smsError.message);
     });
   });
 });

@@ -46,8 +46,7 @@ export const processFile = (path: string, stats: Stats) => {
     histogramProcess.labels('failed').observe(processDuration)
 
     if (err instanceof FileError) {
-      const { logCdr } = createLoggers()
-      logCdr.error(i18n.t('processFile.invalidCdr', { fileName: file.name || path }));
+      createLoggers().get('CDR')?.error(i18n.t('processFile.invalidCdr', { fileName: file.name || path }));
       cdrFile.status = 'ERROR'
       postData(cdrFile, lines)
     }

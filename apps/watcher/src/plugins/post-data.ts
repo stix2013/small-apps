@@ -13,21 +13,21 @@ export function postData (file: Omit<CDRFile, 'lines'>, lines: CDRLine[]) {
     lines: [...lines]
   }
 
+  const loggerPost = createLoggers().get('POST')
+
   return adminClient.post(config.pathWebhook, data)
     .then(() => {
       counterProcess.labels({ label: 'post_data_success' }).inc(1)
-      const { logPost } = createLoggers()
-      logPost.info(`SUCCESS: ${file.filename}, data:  ${JSON.stringify({ ...file, lines: [] })}`)
+      loggerPost?.info(`SUCCESS: ${file.filename}, data:  ${JSON.stringify({ ...file, lines: [] })}`)
     })
     .catch((error) => {
       counterProcess.labels({ label: 'post_data_failed' }).inc(1)
 
       if (axios.isAxiosError(error)) {
         const errAxios = error as AxiosError
-        const { logPost } = createLoggers()
 
         const errMessage = `Filename: ${data.filename}, line count: ${data.lineCount}\n ${errAxios.cause}`
-        logPost.error(errMessage)
+        loggerPost?.error(errMessage)
 
         throw new Error(errMessage)
       }
