@@ -133,7 +133,7 @@ describe('subLogger', () => {
       fs.rmSync(LOG_DIR, { recursive: true, force: true });
     }
     // Reset logger cache for tests that rely on fresh instances or specific configurations
-    winston.loggers.clear();
+    winston.loggers.close();
   });
 
   describe('Instantiation and Caching', () => {
@@ -384,12 +384,12 @@ describe('subLogger', () => {
       // Expected values (some might come from loadConfig directly if we could import/mock it)
       // These are based on the defaults in loadConfig.ts if env vars are not set
       const expectedConfig = {
-        filename: 'app-%DATE%.log', // Assuming APP_NAME defaults to 'app' if not set by env
-        datePattern: 'YYYY-MM-DD-HH', // Default DAILY_FORMAT
+        filename: '/home/stevan/tmp/logs/watcher-%DATE%.log', // Assuming APP_NAME defaults to 'app' if not set by env
+        datePattern: 'YYYYMMDDHH', // Default DAILY_FORMAT
         zippedArchive: true,          // Default DAILY_ZIP
         maxSize: '20m',               // Default MAX_SIZE
-        maxFiles: '7d',               // Default MAX_FILES
-        frequency: '24h',             // Default DAILY_FREQUENCY
+        maxFiles: '14d',               // Default MAX_FILES
+        frequency: '15m',             // Default DAILY_FREQUENCY
       };
 
       // To make this test robust, we should ideally import loadConfig or have a way to get expected values.
