@@ -1,0 +1,15 @@
+APP_NAME='WATCHER'
+APP_LANGUAGE='en'
+
+# logger
+LOG_TIME_FORMAT='YYYY-MM-DD HH:mm:ss'
+LOG_FILENAME_COMBINE='/home/stevan/tmp/logs/combine.log'
+LOG_FILENAME_INFO='/home/stevan/tmp/logs/info.log'
+LOG_FILENAME_ERROR='/home/stevan/tmp/logs/error.log'
+LOG_FILENAME_EXCEPTION='/home/stevan/tmp/logs/exception.log'
+LOG_DAILY_FREQUENCY='15m'
+LOG_DAILY_ZIP='yes'
+LOG_DAILY_FORMAT='YYYYMMDDHH'
+LOG_DAILY_PATH='/home/stevan/tmp/logs'
+LOG_MAX_SIZE='20m'
+LOG_MAX_FILES='14d'

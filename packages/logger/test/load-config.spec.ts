@@ -25,7 +25,7 @@ describe('loadConfig', () => {
     it('should return default values when no environment variables are set and .env is empty', () => {
       const config = loadConfig();
 
-      const expectedLogDir = path.resolve(process.cwd(), 'packages/logger/src/logs');
+      const expectedLogDir = path.resolve(process.cwd(), 'src/logs');
       const expectedAppName = 'logger';
 
       expect(config.APP_NAME).toBe(expectedAppName);
@@ -47,7 +47,7 @@ describe('loadConfig', () => {
 
   describe('Environment Variable Overrides', () => {
     it('should use environment variables when set', () => {
-      const customLogDir = path.resolve(process.cwd(), 'custom/test/logs');
+      const customLogDir = path.resolve(process.cwd(), 'test/logs');
       const customAppName = 'my-app';
       const customDailyPath = path.resolve(process.cwd(), 'custom/daily_rotate');
 
@@ -57,10 +57,10 @@ describe('loadConfig', () => {
       vi.stubEnv('LOG_DAILY_ZIP', 'yes');
       vi.stubEnv('LOG_TIME_FORMAT', 'DD-MM-YYYY HH:mm');
       vi.stubEnv('LOG_DAILY_FORMAT', 'YYYY-MM-DD');
-      vi.stubEnv('LOG_FILENAME_INFO', 'my-info.log');
-      vi.stubEnv('LOG_FILENAME_COMBINE', 'my-combine.log');
-      vi.stubEnv('LOG_FILENAME_ERROR', 'my-error.log');
-      vi.stubEnv('LOG_FILENAME_EXCEPTION', 'my-exception.log');
+      vi.stubEnv('LOG_FILENAME_INFO', path.resolve(customLogDir,'my-info.log'));
+      vi.stubEnv('LOG_FILENAME_COMBINE', path.resolve(customLogDir,'my-combine.log'));
+      vi.stubEnv('LOG_FILENAME_ERROR', path.resolve(customLogDir,'my-error.log'));
+      vi.stubEnv('LOG_FILENAME_EXCEPTION', path.resolve(customLogDir,'my-exception.log'));
       vi.stubEnv('LOG_MAX_SIZE', '100m');
       vi.stubEnv('LOG_MAX_FILES', '30d');
       vi.stubEnv('LOG_DAILY_PATH', customDailyPath);

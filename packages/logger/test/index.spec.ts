@@ -5,7 +5,6 @@ import DailyRotateFile from 'winston-daily-rotate-file'; // Added this import
 import { subLogger } from '../src';
 import path from 'path';
 import fs from 'fs';
-import util from 'util';
 
 const LOG_DIR = path.join(__dirname, 'test-logs'); // Changed to test-logs
 
