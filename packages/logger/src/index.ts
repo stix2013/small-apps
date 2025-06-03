@@ -21,7 +21,7 @@ const customFormat = formatPrint((info: TransformableInfo) => {
   // Ensure this format string does not rely on module-level config that might be stale.
   // Using info.label, which is populated by format.label()
   // Using info.splat (lowercase) which is populated by format.splat()
-  return `${info.timestamp} [${info.label}] [${info.splat}] ${info.message}`;
+  return `${info.timestamp} [${info.level}] [${info.label}] ${info.message}`;
 });
 
 // Helper function to construct the transports array
