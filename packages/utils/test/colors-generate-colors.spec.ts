@@ -173,4 +173,22 @@ describe('generateColors', () => {
     // const colors = generateColors('invalid');
     // expect(colors[600]).toBe(''); // Example if darken was reached
   });
+
+  it('should generate the exact expected color palette for a known base color', () => {
+    const baseColorHex = '1c1c1c'; // R=28, G=28, B=28
+    const expectedColors = {
+      50: '#f4f4f4',   // Lighten by 0.95: round(28 + (255-28)*0.95) = 244
+      100: '#e8e8e8',  // Lighten by 0.9:  round(28 + (255-28)*0.9)  = 232
+      200: '#c6c6c6',  // Lighten by 0.75: round(28 + (255-28)*0.75) = 198
+      300: '#a4a4a4',  // Lighten by 0.6:  round(28 + (255-28)*0.6)  = 164
+      400: '#606060',  // Lighten by 0.3:  round(28 + (255-28)*0.3)  = 96
+      500: '#1c1c1c',  // Base color
+      600: '#191919',  // Darken by 0.9:   round(28 * 0.9)   = 25
+      700: '#151515',  // Darken by 0.75:  round(28 * 0.75)  = 21
+      800: '#111111',  // Darken by 0.6:   round(28 * 0.6)   = 17
+      900: '#0e0e0e',  // Darken by 0.49:  round(28 * 0.49)  = 14
+    };
+    const colors = generateColors(baseColorHex);
+    expect(colors).toEqual(expectedColors);
+  });
 })
