@@ -4,6 +4,9 @@ import type { TransformableInfo } from 'logform';
 import type winston from 'winston';
 import { addColors, format, loggers, transports } from 'winston'; // Import winston for transport type
 import { loadConfig } from './load-config';
+import { inspect } from 'node:util';
+import { SPLAT } from 'triple-beam';
+
 //
 const {
   colorize,
@@ -18,10 +21,17 @@ export type { Logger as WinstonLogger, Container } from 'winston'; // Renamed re
 // loadConfig() will be called inside subLogger to ensure it gets fresh env vars for tests
 
 const customFormat = formatPrint((info: TransformableInfo) => {
+    const {
+    timestamp,
+    level,
+    label, // Using label from format.label()
+    message,
+    [SPLAT]: splat,
+  } = info;
   // Ensure this format string does not rely on module-level config that might be stale.
   // Using info.label, which is populated by format.label()
   // Using info.splat (lowercase) which is populated by format.splat()
-  return `${info.timestamp} [${info.level}] [${info.label}] ${info.message}`;
+  return `${timestamp} [${level}] [${label}] ${message} ${inspect(splat)}`;
 });
 
 // Helper function to construct the transports array
@@ -45,7 +55,7 @@ const buildTransports = (
         format: combine(
           colorize(),
           format.timestamp({ format: TIMESTAMP_FORMAT }),
-          format.splat(),
+          // format.splat(),
           customFormat
         ),
       })
@@ -105,6 +115,7 @@ export const subLogger = (
     level: 'info',
     format: combine(
       formatLabel({ label }),
+      colorize({ level: true, colors:{label: 'yellow' } }), // Colorize the level
       timestamp({
         format: fmtTimestamp || TIMESTAMP_FORMAT,
       }),

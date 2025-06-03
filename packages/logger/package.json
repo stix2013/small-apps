@@ -5,6 +5,7 @@
   "author": "",
   "dependencies": {
     "logform": "^2.7.0",
+    "triple-beam": "^1.4.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
