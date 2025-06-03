@@ -15,7 +15,8 @@
     "eslint-plugin-jsdoc": "50.7.1",
     "eslint-plugin-no-only-tests": "3.3.0",
     "rimraf": "^6.0.1",
-    "typescript-eslint": "8.33.1"
+    "typescript-eslint": "8.33.1",
+    "vitest": "^3.2.0"
   },
   "engine-strict": true,
   "engines": {
