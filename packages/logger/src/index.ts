@@ -1,13 +1,16 @@
-import DailyRotateFile from 'winston-daily-rotate-file'
-import { type Logger, addColors, format, loggers, transports } from 'winston'
-import { loadConfig } from './load-config'
+import DailyRotateFile from 'winston-daily-rotate-file';
+import { addColors, format, loggers, transports } from 'winston';
+import { loadConfig } from './load-config';
 //
-const { colorize, combine, label: formatLabel, printf: formatPrint, timestamp } = format
+const {
+  colorize,
+  combine,
+  label: formatLabel,
+  printf: formatPrint,
+  timestamp,
+} = format;
 
-
-export interface YellowLogger {
-  logger: Logger
-}
+export type { Logger, Container } from 'winston';
 
 const {
   APP_NAME,
@@ -21,20 +24,20 @@ const {
   FILE_EXCEPTION,
   MAX_SIZE,
   MAX_FILES,
-  DAILY_FILENAME
+  DAILY_FILENAME,
 } = loadConfig();
 
-const customFormat = formatPrint(({ timestamp, label, message, level }) => {
-  return `${timestamp} [${level}] [${label}] ${message}`
-})
+const customFormat = formatPrint(({ timestamp, level, label, message }) => {
+  return `${timestamp} [${level}] [${label}] ${message}`;
+});
 
 export const subLogger = (lblString?: string, fmtTimestamp?: string) => {
   addColors({
     info: 'cyan', // fontStyle color
     warn: 'yellow',
     error: 'red',
-    debug: 'green'
-  })
+    debug: 'green',
+  });
 
   // rotate file daily
   const transportDaily: DailyRotateFile = new DailyRotateFile({
@@ -43,21 +46,22 @@ export const subLogger = (lblString?: string, fmtTimestamp?: string) => {
     zippedArchive: DAILY_ZIP,
     maxSize: MAX_SIZE,
     maxFiles: MAX_FILES,
-    frequency: DAILY_FREQUENCY
-  })
+    frequency: DAILY_FREQUENCY,
+  });
 
-  const label = lblString || APP_NAME
+  const label = lblString || APP_NAME;
+
   return loggers.add(label, {
     level: 'info',
     format: combine(
       formatLabel({ label }),
       timestamp({
-        format: fmtTimestamp || TIMESTAMP_FORMAT
+        format: fmtTimestamp || TIMESTAMP_FORMAT,
       }),
       customFormat
     ),
     defaultMeta: {
-      service: 'ym-logger-service'
+      service: 'ym-logger-service',
     },
     exitOnError: false,
     transports: [
@@ -66,29 +70,28 @@ export const subLogger = (lblString?: string, fmtTimestamp?: string) => {
           colorize(),
           format.timestamp({ format: TIMESTAMP_FORMAT }),
           customFormat
-        )
+        ),
       }),
       new transports.File({
         filename: FILE_ERROR,
         level: 'error',
-        maxFiles: 3
+        maxFiles: 3,
       }),
       new transports.File({
         filename: FILE_INFO,
         level: 'info',
-        maxFiles: 5
+        maxFiles: 5,
       }),
       new transports.File({
-        filename: FILE_COMBINE
+        filename: FILE_COMBINE,
       }),
-      transportDaily
+      transportDaily,
     ],
     exceptionHandlers: [
       new transports.File({
         filename: FILE_EXCEPTION,
-        maxFiles: 2
-      })
-    ]
-  })
-}
-
+        maxFiles: 2,
+      }),
+    ],
+  });
+};

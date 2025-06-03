@@ -55,7 +55,7 @@ process.on('SIGINT', () => {
   if (server) {
     server.close((err?: Error) => {
       if (err) {
-        console.log(i18n.t('app.server.closeError'), err.message)
+        console.error(i18n.t('app.server.closeError'), err.message)
       } else {
         console.log(i18n.t('app.server.closed'))
       }

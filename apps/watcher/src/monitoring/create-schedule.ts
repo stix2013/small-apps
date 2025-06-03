@@ -18,8 +18,8 @@ import { createScheduleRules } from './create-schedule-rules';
  */
 interface Logger {
   error: (message: string) => void;
-  // info: (message: string) => void; // Example: add other methods if known/used
-  // warn: (message: string) => void; // Example: add other methods if known/used
+  info: (message: string) => void; // Example: add other methods if known/used
+  warn: (message: string) => void; // Example: add other methods if known/used
 }
 
 /**

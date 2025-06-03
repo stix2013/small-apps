@@ -15,6 +15,7 @@ export function loadConfig() {
   const DAILY_ZIP = !!(
     process.env.LOG_DAILY_ZIP || process.env.LOG_DAILY_ZIP === 'yes'
   );
+
   const DAILY_PATH = process.env.LOG_DAILY_PATH || LOG_DIR;
   const DAILY_FILENAME = `${DAILY_PATH}/${APP_NAME.toLowerCase()}-%DATE%.log`;
   const DAILY_FORMAT = process.env.LOG_DAILY_FORMAT || 'YYYYMMDD-HH';

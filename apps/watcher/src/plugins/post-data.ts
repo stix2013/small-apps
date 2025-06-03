@@ -26,7 +26,7 @@ export function postData (file: Omit<CDRFile, 'lines'>, lines: CDRLine[]) {
         const errAxios = error as AxiosError
         const { logPost } = createLoggers()
 
-        const errMessage = `filename: ${data.filename}, line count: ${data.lineCount}\n ${errAxios.cause}`
+        const errMessage = `Filename: ${data.filename}, line count: ${data.lineCount}\n ${errAxios.cause}`
         logPost.error(errMessage)
 
         throw new Error(errMessage)
