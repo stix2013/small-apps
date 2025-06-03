@@ -3,6 +3,11 @@
   "description": "",
   "version": "0.3.0",
   "author": "",
+  "engine-strict": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

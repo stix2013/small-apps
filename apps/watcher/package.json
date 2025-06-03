@@ -4,6 +4,11 @@
   "version": "0.5.3",
   "author": "SH Moeladi",
   "private": true,
+  "engine-strict": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "dependencies": {
     "@yellow-mobile/const": "workspace:*",
     "@yellow-mobile/logger": "workspace:*",

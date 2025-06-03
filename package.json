@@ -20,8 +20,8 @@
   },
   "engine-strict": true,
   "engines": {
-    "node": ">=16",
-    "pnpm": ">=7"
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   },
   "keywords": [
     "yellow",

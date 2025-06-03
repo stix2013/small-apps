@@ -12,6 +12,11 @@
     "type definitions",
     "yellow mobile apps type definitions"
   ],
+  "engine-strict": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "license": "ISC",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",

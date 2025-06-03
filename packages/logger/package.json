@@ -2,7 +2,12 @@
   "name": "@yellow-mobile/logger",
   "description": "",
   "version": "0.3.0",
-  "author": "",
+  "author": "SH Moeladi",
+  "engine-strict": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "dependencies": {
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
