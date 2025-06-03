@@ -1,10 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { format } from 'winston';
 import { customFormat } from '../src/custom-format';
 
 describe('customFormat', () => {
-  const { printf } = format;
-
   it('should format a log message correctly', () => {
     const info = {
       level: 'info',
@@ -17,9 +14,9 @@ describe('customFormat', () => {
     // Create a new formatter using customFormat
     const formatter = customFormat;
     // Transform the info object
-    // @ts-expect-error we are passing a simplified info object for testing
     const result = formatter.transform(info);
     // Access the formatted message
+    // @ts-expect-error we are passing a simplified info object for testing
     const formattedMessage = result[Symbol.for('message')];
 
     expect(formattedMessage).toBe('2023-10-27T10:00:00.000Z +0ms [info] [test-label] Test message ');
@@ -35,9 +32,12 @@ describe('customFormat', () => {
       splat: [{ data: 'additional data' }],
     };
     const formatter = customFormat;
-    // @ts-expect-error we are passing a simplified info object for testing
+
     const result = formatter.transform(info);
+
+    // @ts-expect-error we are passing a simplified info object for testing
     const formattedMessage = result[Symbol.for('message')];
+
     // The inspect function might produce slightly different output depending on the environment,
     // so we check for the presence of the core parts of the message.
     expect(formattedMessage).toContain('2023-10-27T10:05:00.000Z +5ms [warn] [test-label-splat] Test message with splat');
@@ -48,17 +48,14 @@ describe('customFormat', () => {
     const info = {
       level: 'error',
       message: 'Minimal message',
-      // @ts-expect-error we are testing missing fields
       timestamp: undefined,
-      // @ts-expect-error we are testing missing fields
       ms: undefined,
-      // @ts-expect-error we are testing missing fields
       label: undefined,
       splat: undefined,
     };
     const formatter = customFormat;
-    // @ts-expect-error we are passing a simplified info object for testing
     const result = formatter.transform(info);
+    // @ts-expect-error we are passing a simplified info object for testing
     const formattedMessage = result[Symbol.for('message')];
 
     // Adjusting expectation for undefined fields
