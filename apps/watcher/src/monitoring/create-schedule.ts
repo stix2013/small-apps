@@ -13,16 +13,6 @@ import { gaugeSimInnApi, gaugeSimInnSMS } from './prometheus'
 import { createScheduleRules } from './create-schedule-rules';
 
 /**
- * Basic logger interface for error reporting.
- * Ensures that the logger used within createSchedule has an error method.
- */
-interface Logger {
-  error: (message: string) => void;
-  info: (message: string) => void; // Example: add other methods if known/used
-  warn: (message: string) => void; // Example: add other methods if known/used
-}
-
-/**
  * Represents the scheduled jobs for API and SMS monitoring.
  * Contains the actual Job instances returned by node-schedule.
  */
@@ -40,7 +30,8 @@ export interface ScheduledJobs {
  * @returns An object containing the scheduled API and SMS jobs (`jobAPI` and `jobSMS`).
  */
 export const createSchedule = (scheduleName: string = 'SIMINN-API'): ScheduledJobs => {
-  const { logSimInnApi, logSimInnSMS }: { logSimInnApi: Logger; logSimInnSMS: Logger } = createLoggers();
+  const logSimInnApi = createLoggers().get('API');
+  const logSimInnSMS = createLoggers().get('SMS');
   const { ruleAPI, ruleSMS } = createScheduleRules();
 
   const jobAPI: Job = schedule.scheduleJob(scheduleName, ruleAPI, async () => {
@@ -51,13 +42,13 @@ export const createSchedule = (scheduleName: string = 'SIMINN-API'): ScheduledJo
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError; // Narrow type for easier access, though isAxiosError already does this for props
         gaugeSimInnApi.labels({ status: axiosError.response?.statusText || 'AxiosError' }).set(axiosError.response?.status || 0);
-        logSimInnApi.error(`Axios error: ${axiosError.message}`);
+        logSimInnApi?.error(`Axios error: ${axiosError.message}`);
       } else if (err instanceof Error) {
         gaugeSimInnApi.labels({ status: 'Error' }).set(0);
-        logSimInnApi.error(`Generic error: ${err.message}`);
+        logSimInnApi?.error(`Generic error: ${err.message}`);
       } else {
         gaugeSimInnApi.labels({ status: 'UnknownError' }).set(0);
-        logSimInnApi.error('An unknown error occurred');
+        logSimInnApi?.error('An unknown error occurred');
       }
     }
   });
@@ -75,11 +66,11 @@ export const createSchedule = (scheduleName: string = 'SIMINN-API'): ScheduledJo
       gaugeSimInnSMS.labels({ status: 'Error' }).set(0);
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
-        logSimInnSMS.error(`Axios error during SMS healthcheck: ${axiosError.message}`);
+        logSimInnSMS?.error(`Axios error during SMS healthcheck: ${axiosError.message}`);
       } else if (err instanceof Error) {
-        logSimInnSMS.error(`Generic error during SMS healthcheck: ${err.message}`);
+        logSimInnSMS?.error(`Generic error during SMS healthcheck: ${err.message}`);
       } else {
-        logSimInnSMS.error('An unknown error occurred during SMS healthcheck');
+        logSimInnSMS?.error('An unknown error occurred during SMS healthcheck');
       }
     }
   });

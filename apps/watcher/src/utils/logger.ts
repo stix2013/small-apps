@@ -17,7 +17,18 @@ export const loggers = new Map<string, Logger>()
 
 export const logCdrFilename = (filename: string) => subLogger(`CDR ${filename}`)
 
-export const createLoggers = () => {
+export const createLoggers = (names?: Record<string, string>): Map<string, Logger> => {
+
+  if (names) {
+    for (const [key, value] of Object.entries(names)) {
+      if (!loggers.has(key)) {
+        loggers.set(key, subLogger(value))
+      }
+    }
+
+    return loggers
+  }
+
   if (!loggers.has(defaultNames.logCdr)) {
     loggers.set(defaultNames.logCdr, logCdr)
   }
@@ -35,10 +46,5 @@ export const createLoggers = () => {
   }
 
   // Return the singleton instances
-  return {
-    logCdr,
-    logPost,
-    logSimInnApi,
-    logSimInnSMS
-  }
+  return loggers
 }

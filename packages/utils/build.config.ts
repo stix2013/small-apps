@@ -10,7 +10,6 @@ export default defineBuildConfig([
       'src/colors/index.ts',
       'src/converters/index.ts',
       'src/coverage/index.ts',
-      'src/dates/index.ts',
       {
         builder: 'copy',
         input: 'src/assets/',
