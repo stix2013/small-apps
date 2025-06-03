@@ -1,4 +1,4 @@
-import winston, { format as winstonFormat } from 'winston';
+import { transports, format as winstonFormat } from 'winston';
 import { type Logform, type transport } from 'winston';
 
 // Helper function to construct the transports array
@@ -20,8 +20,7 @@ export const buildTransports = (
     transportList.push(testConsoleTransport);
   } else {
     transportList.push(
-      // @ts-expect-error - Console is a generic transport type
-      new (winston.transports.Console)({
+      new transports.Console({
         format: winstonFormat.combine(
           winstonFormat.colorize(),
           winstonFormat.timestamp({ format: TIMESTAMP_FORMAT }),
@@ -34,20 +33,17 @@ export const buildTransports = (
 
     // Use transportDaily for all file transports
     transportList.push(
-      // @ts-expect-error - File is a generic transport type
-      (winston.transports.File)({
+      new transports.File({
         filename: FILE_ERROR,
         level: 'error',
         maxFiles: 3,
       }),
-      // @ts-expect-error - File is a generic transport type
-      (winston.transports.File)({
+      new transports.File({
         filename: FILE_INFO,
         level: 'info',
         maxFiles: 5,
       }),
-      // @ts-expect-error - File is a generic transport type
-      (winston.transports.File)({
+      new transports.File({
         filename: FILE_COMBINE,
         maxFiles: 5,
       }),
