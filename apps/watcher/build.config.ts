@@ -1,6 +1,6 @@
 import path from 'pathe';
 import { defineBuildConfig } from 'unbuild';
-import { visualizer } from 'rollup-plugin-visualizer';
+// import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineBuildConfig({
   declaration: false,
@@ -11,11 +11,11 @@ export default defineBuildConfig({
   ],
   entries: [
     'src/index',
-    // {
-    //   builder: 'copy',
-    //   input: 'src/locales',
-    //   outDir: 'dist/locales',
-    // },
+    {
+      builder: 'copy',
+      input: 'src/locales',
+      outDir: 'dist/locales',
+    },
   ],
   rollup: {
     resolve: {
