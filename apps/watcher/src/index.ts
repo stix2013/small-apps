@@ -45,9 +45,12 @@ async function main() {
     console.log(i18n.t('app.nodeVersion', { version: process.version }))
   })
 
-  console.log(i18n.t('app.started'));
-  console.log('Testing utils: Currency for USD:', getCurrencySymbol('USD'));
-  console.log('Testing utils/colors: Orange color palette:', colorsOrange);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(i18n.t('app.started'));
+    console.log('NODE ENV:', process.env.NODE_ENV);
+    console.log('Testing utils: Currency for USD:', getCurrencySymbol('USD'));
+    console.log('Testing utils/colors: Orange color palette:', colorsOrange);
+  }
 }
 
 main().catch(error => {

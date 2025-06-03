@@ -10,7 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "removeComments": true,
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution":"nodenext",
     "baseUrl": ".",
     "paths": {
       "@src/*": ["./src/*"]
@@ -23,7 +24,7 @@
     ]
   },
   "exclude": [
-    "node_modules", 
+    "node_modules",
     "**/*/dist"
   ]
 }
