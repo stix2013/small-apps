@@ -11,6 +11,11 @@ export default defineBuildConfig([
       'src/converters/index.ts',
       'src/coverage/index.ts',
       'src/dates/index.ts',
+      {
+        builder: 'copy',
+        input: 'src/currency-symbols.json',
+        outDir: 'dist/currency-symbols.json',
+      },
     ],
     rollup: {
       emitCJS: true,
