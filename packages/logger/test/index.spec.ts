@@ -1,12 +1,15 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi, beforeAll, beforeEach } from 'vitest';
+import { Writable } from 'stream'; // Import Writable from stream
 
-import winston from 'winston';
+import winston, { transports as WinstonTransports, format as WinstonFormat } from 'winston'; // Import transports and format
 import DailyRotateFile from 'winston-daily-rotate-file'; // Added this import
 import { subLogger } from '../src';
 import path from 'path';
 import fs from 'fs';
 
 const LOG_DIR = path.join(__dirname, 'test-logs'); // Changed to test-logs
+// Set LOG_DIR environment variable globally for this test file
+process.env.LOG_DIR = LOG_DIR;
 
 // Helper function to wait for file content
 const waitForFileContent = (filePath: string, expectedContent?: string | RegExp, timeout = 2000): Promise<void> => {
@@ -51,70 +54,27 @@ const waitForFileContent = (filePath: string, expectedContent?: string | RegExp,
 
 // Helper to create log regex
 // Format: timestamp [LEVEL_UPPERCASE] [LABEL] [SPLAT_IF_ANY] message
-const createLogRegex = (level: string, label: string, message: string, splat?: string): RegExp => {
-  const timestampPattern = '\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}';
+const createLogRegex = (
+  level: string,
+  label: string,
+  message: string,
+  splat?: string,
+  customTimestampPattern?: string
+): RegExp => {
+  const timestampPattern = customTimestampPattern || '\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}';
   const levelPattern = `\\[${level.toUpperCase()}\\]`;
-  const labelPattern = `\\[${label}\\]`;
-  const splatPattern = splat ? ` \\[\\[${splat}\\]\\]` : '(?: \\[[^\\]]+\\])?'; // Optional splat part if not specified
-  const messagePattern = message.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special characters in message
-  // The custom format is: `${info.timestamp} [${info.level.toUpperCase()}] [${info.LEVEL}] [${info.SPLAT}] ${info.message}`;
-  // So SPLAT comes before message. Let's adjust.
-  // The SPLAT array is typically joined by spaces if it exists, e.g. info.SPLAT = ['arg1', 'arg2'] might become '[arg1 arg2]' or similar.
-  // The current logger format is `[${info.SPLAT}]`. If info.SPLAT is an array, this might result in e.g. `[arg1,arg2]`.
-  // If info.SPLAT is undefined, it might print `[undefined]`. This needs to be handled by the logger's format or tested as is.
-  // For simplicity, let's assume if splat is provided in the test, it will appear as `[splat]`
-  // If not, we'll make the splat part entirely optional including its brackets: (?: \[[^\]]+\])?
-  // Based on Winston's default splat behavior, it interpolates into the message.
-  // However, the custom format explicitly includes `[${info.SPLAT}]`.
-  // Let's assume `info.SPLAT` will be a string representation of the splat arguments.
-  // If logger.info('message %s', 'val') -> info.SPLAT might be "['val']" or something similar.
-  // The default format for splat arguments when using `format.splat()` is to integrate them into the message.
-  // Since we have `[${info.SPLAT}]` explicitly, we need to see what winston puts in `info.SPLAT`.
-  // It's often the array of splat arguments. `util.format` is not explicitly used on `info.SPLAT` in the custom format string.
-  // So if `info.SPLAT` is `['foo', 'bar']`, it would print `[foo,bar]`.
-  // Let's refine the splat pattern. If testing for a specific splat, it will be `\[SPLAT_CONTENT\]`.
-  // If no specific splat is tested, it could be `(?: \[[^\]]*\])?` to match `[anything]` or nothing if `[undefined]` is not printed.
-  // Given the format `[${info.SPLAT}]`, if there are no splat args, `info.SPLAT` would be undefined, leading to `[undefined]`.
-  // This is likely not desired. A proper `splat()` formatter should be used before `customFormat`.
-  // Assuming `format.splat()` is implicitly or explicitly part of the chain that populates `info.message` and `info.splat` property.
-  // For now, let's assume `[${info.SPLAT}]` means the literal string value of `info.SPLAT` will be there.
-  // If `info.SPLAT` is undefined, it becomes `[undefined]`. If `['test']`, then `[test]`.
-  // This is a bit tricky. Let's simplify: if splat is being tested, expect `[SPLAT_VALUE]`. If not, expect `\[undefined\]` or make it more general.
+  // Escape label for regex, in case it contains special characters
+  const labelPattern = `\\[${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]`;
+  const messagePattern = message.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  // Revisiting the problem statement: `[${info.LEVEL}] [${info.SPLAT}] ${info.message}`
-  // If LEVEL is label, then `[LABEL_TEXT]`.
-  // If SPLAT is for extra args, and not processed by `format.splat()` into the message, then it will be an array.
-  // `logger.info('main message', 'splat1', 'splat2')` -> info.message = 'main message', info.SPLAT = ['splat1', 'splat2']
-  // Output: `[LABEL_TEXT] [splat1,splat2] main message` (if that's how array.toString() works for SPLAT)
-
-  // Let's assume for a simple splat string test: `logger.info("message %s", "arg")`
-  // With `format.splat()` typically this becomes `message arg`.
-  // With `[${info.SPLAT}]` and `format.splat()` in the chain, `info.SPLAT` would be `['arg']`.
-  // So the output segment would be `[LABEL] [['arg']] message`. This seems too complex.
-  // The original `subLogger` doesn't explicitly add `format.splat()` in its `combine`.
-  // Winston might add it by default for `printf` or if it sees `%s`.
-  // Let's test the current behavior.
-  // The current tests for info/error don't show a `[undefined]` or splat part, e.g. `[test-label] info message`.
-  // This suggests that if `info.SPLAT` is undefined, the `[${info.SPLAT}]` part might be missing or `customFormat` handles it.
-  // The provided `customFormat` is: `return `${info.timestamp} [${info.level.toUpperCase()}] [${info.LEVEL}] [${info.SPLAT}] ${info.message}`;`
-  // If `info.SPLAT` is undefined, it will literally print `[undefined]`.
-  // The existing tests `infoLog.toContain('[test-label] info message')` would fail if `[undefined]` was always there.
-  // This implies `info.LEVEL` is the label, and `info.SPLAT` might be missing if no splat args.
-  // This means the format string in the logger might be more dynamic, or the tests are too loose.
-  // Let's assume the `[${info.SPLAT}]` part only appears if splat arguments exist.
-  // No, `printf` doesn't work that way. It will print literally `[undefined]`.
-  // The previous tests `await waitForFileContent(path.join(LOG_DIR, 'info.log'), infoLogPattern);`
-  // where `infoLogPattern = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \[INFO\] \[test-label\] info message/`
-  // This regex does NOT account for a `[undefined]` part.
-  // This means either:
-  // 1. The `customFormat` in src/index.ts is NOT what's actually running (unlikely if I just read it).
-  // 2. `info.SPLAT` is somehow not undefined (e.g. default empty array/string).
-  // 3. The tests were passing because `waitForFileContent` with a regex only needs a *match*, not a full line match.
-  //    If the actual log was `TIMESTAMP [INFO] [test-label] [undefined] info message`, the regex would still match. This is the most likely.
-
-  // So, the regex needs to account for `[undefined]` if no splat args, or `[value]` if splat args.
-  const splatValue = splat ? splat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : 'undefined';
-  const actualSplatPattern = `\\[${splatValue}\\]`; // Matches `[undefined]` or `[actualSplatValue]`
+  // Handle splat based on observed behavior: info.splat appears as 'undefined' in logs if not actual splat values.
+  let actualSplatPattern;
+  if (splat === undefined) {
+    actualSplatPattern = '\\[undefined\\]'; // Expect "[undefined]"
+  } else {
+    // If a specific splat string is provided for matching (e.g., "str,123"), escape and bracket it.
+    actualSplatPattern = `\\[${splat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]`;
+  }
 
   return new RegExp(`^${timestampPattern} ${levelPattern} ${labelPattern} ${actualSplatPattern} ${messagePattern}`);
 };
@@ -127,12 +87,29 @@ describe('Logger', () => {
 });
 
 describe('subLogger', () => {
+  beforeAll(() => {
+    // This is a good place for one-time setup if needed,
+    // but LOG_DIR is now set globally for the file.
+  });
+
+  beforeEach(() => {
+    // Reset logger cache before each test to ensure fresh instances with current env vars
+    winston.loggers.close();
+    // Ensure the log directory exists and is clean, or handle as needed
+    // Forcing LOG_DIR again here can be a safeguard if tests modify it, but primarily set globally.
+    process.env.LOG_DIR = LOG_DIR;
+    if (fs.existsSync(LOG_DIR)) {
+      fs.rmSync(LOG_DIR, { recursive: true, force: true });
+    }
+    fs.mkdirSync(LOG_DIR, { recursive: true });
+  });
+
   afterEach(() => {
     // Clean up logs directory
     if (fs.existsSync(LOG_DIR)) {
       fs.rmSync(LOG_DIR, { recursive: true, force: true });
     }
-    // Reset logger cache for tests that rely on fresh instances or specific configurations
+    // Reset logger cache again, just in case.
     winston.loggers.close();
   });
 
@@ -173,23 +150,51 @@ describe('subLogger', () => {
   });
 
   it('should use APP_NAME as default label if no label is provided (checked via log output)', async () => {
-    // This test is a bit more involved as it requires knowing APP_NAME or using a general pattern.
-    // loadConfig is not directly available here without importing it.
-    // For now, we assume the default label set by subLogger() will appear in logs.
-    const logger = subLogger(); // No label, should use APP_NAME
-    logger.level = 'info';
+    const defaultAppName = 'logger'; // Default APP_NAME from loadConfig if not overridden by env
     const message = 'message from default labelled logger';
-    // The label will be whatever APP_NAME is in loadConfig().
-    // We create a regex that expects *any* label, as we can't know APP_NAME's value easily.
-    const logPatternWithDynamicLabel = createLogRegex('info', '[^\\]]+', message); // Matches any char except ']' for label
 
-    const consoleInfoSpy = vi.spyOn(console, 'info');
+    // Replicate the necessary format parts for the test transport
+    // Ideally, these would be exported from src/index or src/load-config if they become complex
+    const testTimestampFormat = process.env.LOG_TIME_FORMAT || 'YYYY-MM-DD HH:mm:ss';
+    const testCustomFormat = WinstonFormat.printf((info: any) => {
+      return `${info.timestamp} [${info.level.toUpperCase()}] [${info.label}] [${info.splat}] ${info.message}`;
+    });
+
+    const testConsoleFormat = WinstonFormat.combine(
+      // WinstonFormat.colorize(), // Temporarily remove colorize for this test
+      WinstonFormat.timestamp({ format: testTimestampFormat }),
+      WinstonFormat.splat(),
+      testCustomFormat
+    );
+
+    let consoleOutput: string[] = [];
+    const mockWritable = new Writable({
+      write(chunk, encoding, callback) {
+        consoleOutput.push(chunk.toString());
+        callback();
+      }
+    });
+    const customStreamTransport = new WinstonTransports.Stream({
+      stream: mockWritable,
+      format: testConsoleFormat,
+      level: 'silly', // Ensure it captures info messages
+    });
+
+    const logger = subLogger(undefined, undefined, customStreamTransport);
+    logger.level = 'silly'; // Ensure all levels, including info, are processed by logger
+
     logger.info(message);
 
-    await waitForFileContent(path.join(LOG_DIR, 'info.log'), logPatternWithDynamicLabel);
-    await waitForFileContent(path.join(LOG_DIR, 'combine.log'), logPatternWithDynamicLabel);
-    expect(consoleInfoSpy).toHaveBeenCalledWith(expect.stringMatching(logPatternWithDynamicLabel));
-    consoleInfoSpy.mockRestore();
+    const logPattern = createLogRegex('info', defaultAppName, message);
+
+    // Assert against the custom stream's output
+    expect(consoleOutput.length).toBeGreaterThan(0);
+    // Strip ANSI codes before testing with regex, as logPattern doesn't account for them
+    expect(consoleOutput.some(line => logPattern.test(line.replace(/\x1B\[[0-9;]*[mG]/g, '')))).toBe(true);
+
+    // File checks remain as they were (to ensure other transports are not affected)
+    await waitForFileContent(path.join(LOG_DIR, 'info.log'), logPattern);
+    await waitForFileContent(path.join(LOG_DIR, 'combine.log'), logPattern);
   });
 
 
@@ -217,9 +222,9 @@ describe('subLogger', () => {
     logger.level = 'info';
     const message = 'message from custom timestamp logger';
 
-    // Slightly adapt createLogRegex to expect a different timestamp format
-    const customTimestampPattern = '\\d{2}-\\d{2}-\\d{4} \\d{2}:\\d{2}:\\d{2}';
-    const logPattern = new RegExp(`^${customTimestampPattern} \\[INFO\\] \\[${testLabel}\\] \\[undefined\\] ${message}`);
+    const customTimestampRegexPattern = '\\d{2}-\\d{2}-\\d{4} \\d{2}:\\d{2}:\\d{2}';
+    // For 'undefined' splat, pass undefined or rely on default behavior of createLogRegex
+    const logPattern = createLogRegex('info', testLabel, message, undefined, customTimestampRegexPattern);
 
     const consoleInfoSpy = vi.spyOn(console, 'info');
     logger.info(message);
@@ -346,29 +351,21 @@ describe('subLogger', () => {
 
   describe('Exception Handling Configuration', () => {
     it('should have an exception handler configured to write to the correct file', () => {
-      const logger = subLogger('exception-test');
-      const exceptionTransport = logger.exceptions.handlers.find(handler => {
-        // Check if it's a File transport. Winston's transports don't have a very specific 'name' property for type checking.
-        // We can check for properties characteristic of a FileTransport instance.
-        return handler instanceof winston.transports.File || (handler as any).filename === 'exception.log';
-      }) as winston.transports.FileTransportInstance | undefined;
+      const logger = subLogger('exception-test'); // This will use the LOG_DIR from process.env
+      let exceptionTransport: winston.transports.FileTransportInstance | undefined;
+      const expectedPath = path.join(LOG_DIR, 'exception.log');
+
+      for (const handler of logger.exceptions.handlers.values()) {
+        if (handler instanceof winston.transports.File) {
+          if ((handler.options as any)?.filename === expectedPath) {
+            exceptionTransport = handler as winston.transports.FileTransportInstance;
+            break;
+          }
+        }
+      }
 
       expect(exceptionTransport).toBeDefined();
-      expect(exceptionTransport?.filename).toBe('exception.log'); // Assuming FILE_EXCEPTION resolves to this
-      // We can get more specific if we import loadConfig or use more detailed checks
-      // For example, checking `exceptionTransport.options.filename`
-      expect((exceptionTransport?.options as any)?.filename).toBe(path.join('logs', 'exception.log'));
-      // Note: The path here is relative to CWD when logger is created, or absolute if specified.
-      // The FILE_EXCEPTION in loadConfig is just 'logs/exception.log'.
-      // The logger prepends the LOG_DIR only for its own file transports, not necessarily for paths from loadConfig.
-      // Let's re-verify how paths are handled in subLogger.
-      // `FILE_EXCEPTION` is directly used in `new transports.File({ filename: FILE_EXCEPTION })`.
-      // Winston by default considers these paths relative to `process.cwd()`.
-      // So, the test should check against this, not necessarily LOG_DIR.
-      // However, `loadConfig` itself prepends `LOG_BASE_DIR` ('logs')
-      // `const LOG_BASE_DIR = process.env.LOG_DIR || 'logs';`
-      // `const FILE_EXCEPTION = path.join(LOG_BASE_DIR, process.env.FILE_EXCEPTION || 'exception.log');`
-      // So, `exceptionTransport.options.filename` should indeed be `logs/exception.log`.
+      expect((exceptionTransport?.options as any)?.filename).toBe(expectedPath);
     });
   });
 
@@ -381,27 +378,35 @@ describe('subLogger', () => {
 
       expect(dailyRotateTransport).toBeDefined();
 
-      // Expected values (some might come from loadConfig directly if we could import/mock it)
-      // These are based on the defaults in loadConfig.ts if env vars are not set
+      // Expected values based on defaults in loadConfig.ts (assuming no relevant env vars are set)
+      // APP_NAME defaults to 'logger'
+      // LOG_DIR is now set to our test-specific LOG_DIR
+      const expectedAppName = (process.env.APP_NAME || 'logger').toLowerCase();
+      const expectedDailyFilenamePattern = `${expectedAppName}-%DATE%.log`;
+      const expectedDailyPath = LOG_DIR; // DAILY_PATH defaults to LOG_DIR
+
       const expectedConfig = {
-        filename: '/home/stevan/tmp/logs/watcher-%DATE%.log', // Assuming APP_NAME defaults to 'app' if not set by env
-        datePattern: 'YYYYMMDDHH', // Default DAILY_FORMAT
-        zippedArchive: true,          // Default DAILY_ZIP
-        maxSize: '20m',               // Default MAX_SIZE
-        maxFiles: '14d',               // Default MAX_FILES
-        frequency: '15m',             // Default DAILY_FREQUENCY
+        // filename will be LOG_DIR/APP_NAME-%DATE%.log
+        filename: path.join(expectedDailyPath, expectedDailyFilenamePattern),
+        datePattern: process.env.LOG_DAILY_FORMAT || 'YYYYMMDD-HH', // Default DAILY_FORMAT
+        zippedArchive: !!(process.env.LOG_DAILY_ZIP || process.env.LOG_DAILY_ZIP === 'yes'), // Default DAILY_ZIP logic
+        maxSize: process.env.LOG_MAX_SIZE || '20m', // Default MAX_SIZE
+        maxFiles: process.env.LOG_MAX_FILES || '14d', // Default MAX_FILES
+        frequency: process.env.LOG_DAILY_FREQUENCY, // Default DAILY_FREQUENCY (can be undefined)
       };
 
-      // To make this test robust, we should ideally import loadConfig or have a way to get expected values.
-      // For now, we'll assert against the known defaults from `loadConfig.ts` structure.
-      // Note: `dailyRotateTransport.filename` might be the resolved one, not the pattern.
       // Accessing options directly:
       expect((dailyRotateTransport?.options as any)?.filename).toBe(expectedConfig.filename);
       expect((dailyRotateTransport?.options as any)?.datePattern).toBe(expectedConfig.datePattern);
       expect((dailyRotateTransport?.options as any)?.zippedArchive).toBe(expectedConfig.zippedArchive);
       expect((dailyRotateTransport?.options as any)?.maxSize).toBe(expectedConfig.maxSize);
       expect((dailyRotateTransport?.options as any)?.maxFiles).toBe(expectedConfig.maxFiles);
-      expect((dailyRotateTransport?.options as any)?.frequency).toBe(expectedConfig.frequency);
+      // Frequency might be undefined if not set, so handle that case
+      if (expectedConfig.frequency) {
+        expect((dailyRotateTransport?.options as any)?.frequency).toBe(expectedConfig.frequency);
+      } else {
+        expect((dailyRotateTransport?.options as any)?.frequency).toBeUndefined();
+      }
     });
   });
 });

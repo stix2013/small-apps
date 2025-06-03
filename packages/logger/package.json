@@ -25,7 +25,7 @@
   "scripts": {
     "build": "unbuild",
     "prepack": "pnpm build",
-    "test": "vitest"
+    "test": "NODE_ENV=development vitest"
   },
   "sideEffects": false,
   "type": "module",
