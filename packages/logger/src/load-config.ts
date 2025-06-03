@@ -1,7 +1,24 @@
 import { config } from 'dotenv';
 import path from 'path';
 
-export function loadConfig() {
+export interface LoggerConfig {
+  APP_NAME: string;
+  LOG_DIR: string;
+  DAILY_FREQUENCY: string | undefined;
+  DAILY_ZIP: boolean;
+  TIMESTAMP_FORMAT: string;
+  DAILY_FORMAT: string;
+  FILE_INFO: string;
+  FILE_COMBINE: string;
+  FILE_ERROR: string;
+  FILE_EXCEPTION: string;
+  MAX_SIZE: string;
+  MAX_FILES: string;
+  DAILY_PATH: string;
+  DAILY_FILENAME: string;
+}
+
+export function loadConfig(): LoggerConfig {
   const result = config();
 
   if (result.error) {

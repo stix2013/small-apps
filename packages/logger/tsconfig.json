@@ -5,7 +5,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
+    "noEmit": false,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -17,7 +17,10 @@
       "esnext"
     ],
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist"
   },
   "include": [
     "src"

@@ -1,5 +1,5 @@
 import DailyRotateFile from 'winston-daily-rotate-file';
-import { addColors, format, loggers, transports } from 'winston';
+import { addColors, format, loggers, transports, Logger } from 'winston'; // Added Logger here
 import { loadConfig } from './load-config';
 //
 const {
@@ -10,7 +10,7 @@ const {
   timestamp,
 } = format;
 
-export type { Logger, Container } from 'winston';
+export type { Logger as WinstonLogger, Container } from 'winston'; // Renamed re-exported Logger to avoid conflict if any, though direct import is preferred for internal use.
 
 const {
   APP_NAME,
@@ -27,11 +27,11 @@ const {
   DAILY_FILENAME,
 } = loadConfig();
 
-const customFormat = formatPrint(({ timestamp, level, label, message }) => {
+const customFormat = formatPrint(({ timestamp, level, label, message }: { timestamp: string; level: string; label: string; message: string }) => {
   return `${timestamp} [${level}] [${label}] ${message}`;
 });
 
-export const subLogger = (lblString?: string, fmtTimestamp?: string) => {
+export const subLogger = (lblString?: string, fmtTimestamp?: string): Logger => {
   addColors({
     info: 'cyan', // fontStyle color
     warn: 'yellow',
