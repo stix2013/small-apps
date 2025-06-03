@@ -1,51 +1,51 @@
-import DailyRotateFile from 'winston-daily-rotate-file';
-import type { Logger } from 'winston';
-import type { TransformableInfo } from 'logform';
-import type winston from 'winston';
+import type { Logform, Logger , transport } from 'winston';
 import { addColors, format, loggers, transports } from 'winston'; // Import winston for transport type
 import { loadConfig } from './load-config';
 import { inspect } from 'node:util';
-import { SPLAT } from 'triple-beam';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 //
 const {
   colorize,
   combine,
+  ms,
   label: formatLabel,
   printf: formatPrint,
   timestamp,
+  splat: formatSplat
 } = format;
 
 export type { Logger as WinstonLogger, Container } from 'winston'; // Renamed re-exported Logger to avoid conflict if any, though direct import is preferred for internal use.
 
 // loadConfig() will be called inside subLogger to ensure it gets fresh env vars for tests
 
-const customFormat = formatPrint((info: TransformableInfo) => {
+const customFormat = formatPrint((info: Logform.TransformableInfo) => {
     const {
     timestamp,
     level,
+    ms,
     label, // Using label from format.label()
     message,
-    [SPLAT]: splat,
+    splat,
   } = info;
-  // Ensure this format string does not rely on module-level config that might be stale.
-  // Using info.label, which is populated by format.label()
-  // Using info.splat (lowercase) which is populated by format.splat()
-  return `${timestamp} [${level}] [${label}] ${message} ${inspect(splat)}`;
+
+  return `${timestamp} ${ms} [${level}] [${label}] ${message} ${splat ? inspect(splat, { depth: null }) : ''}`;
 });
 
 // Helper function to construct the transports array
 const buildTransports = (
   isTest: boolean, // Flag to indicate if running in test mode for console
-  testConsoleTransport: winston.transport | undefined, // The transport to inject for tests
+  testConsoleTransport: transport | undefined, // The transport to inject for tests
   TIMESTAMP_FORMAT: string,
-  customFormat: winston.Logform.Format,
+  custom: Logform.Format,
+  splat: Logform.Format,
+  ms: Logform.Format,
   FILE_ERROR: string,
   FILE_INFO: string,
   FILE_COMBINE: string,
-  transportDaily: winston.transport // Assuming DailyRotateFile is a winston.transport
-): winston.transport[] => {
-  const transportList: winston.transport[] = [];
+  transportDaily: transport // Assuming DailyRotateFile is a winston.transport
+): transport[] => {
+  const transportList: transport[] = [];
 
   if (isTest && testConsoleTransport) {
     transportList.push(testConsoleTransport);
@@ -55,8 +55,8 @@ const buildTransports = (
         format: combine(
           colorize(),
           format.timestamp({ format: TIMESTAMP_FORMAT }),
-          // format.splat(),
-          customFormat
+          splat,
+          custom
         ),
       })
     );
@@ -75,7 +75,7 @@ const buildTransports = (
 export const subLogger = (
   lblString?: string,
   fmtTimestamp?: string,
-  testConsoleTransport?: winston.transport // Optional transport for testing
+  testConsoleTransport?: transport // Optional transport for testing
 ): Logger => {
   const {
     APP_NAME,
@@ -115,11 +115,12 @@ export const subLogger = (
     level: 'info',
     format: combine(
       formatLabel({ label }),
-      colorize({ level: true, colors:{label: 'yellow' } }), // Colorize the level
+      ms(), // Add milliseconds to the log
+      colorize(), // Colorize the level
       timestamp({
         format: fmtTimestamp || TIMESTAMP_FORMAT,
       }),
-      format.splat(), // Added splat processing
+      formatSplat(), // Added splat processing
       customFormat
     ),
     defaultMeta: {
@@ -131,6 +132,8 @@ export const subLogger = (
       testConsoleTransport,
       TIMESTAMP_FORMAT,
       customFormat,
+      formatSplat(),
+      ms(),
       FILE_ERROR,
       FILE_INFO,
       FILE_COMBINE,
