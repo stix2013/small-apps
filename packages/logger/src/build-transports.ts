@@ -31,18 +31,22 @@ export const buildTransports = (
       })
     );
 
+    // Use transportDaily for all file transports
     transportList.push(
-      new transports.File({
+      // @ts-expect-error - transportDaily is a generic transport type
+      new transportDaily({
         filename: FILE_ERROR,
         level: 'error',
         maxFiles: 3,
       }),
-      new transports.File({
+      // @ts-expect-error - transportDaily is a generic transport type
+      new transportDaily({
         filename: FILE_INFO,
         level: 'info',
         maxFiles: 5,
       }),
-      new transports.File({
+      // @ts-expect-error - transportDaily is a generic transport type
+      new transportDaily({
         filename: FILE_COMBINE,
         maxFiles: 5,
       }),
