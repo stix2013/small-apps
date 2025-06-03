@@ -6,7 +6,9 @@ export default defineBuildConfig({
   declaration: false,
   failOnWarn: false,
   clean: true,
-  externals: ['@yellow-mobile/types'],
+  externals: [
+    '@yellow-mobile/types'
+  ],
   entries: [
     'src/index',
     {

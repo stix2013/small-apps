@@ -1,5 +1,7 @@
 import DailyRotateFile from 'winston-daily-rotate-file';
-import { addColors, format, loggers, transports, Logger } from 'winston'; // Added Logger here
+import type { Logger } from 'winston';
+import type { TransformableInfo } from 'logform';
+import { addColors, format, loggers, transports } from 'winston'; // Added Logger here
 import { loadConfig } from './load-config';
 //
 const {
@@ -27,8 +29,8 @@ const {
   DAILY_FILENAME,
 } = loadConfig();
 
-const customFormat = formatPrint(({ timestamp, level, label, message }: { timestamp: string; level: string; label: string; message: string }) => {
-  return `${timestamp} [${level}] [${label}] ${message}`;
+const customFormat = formatPrint((info: TransformableInfo) => {
+  return `${info.timestamp} [${info.level.toUpperCase()}] [${info.LEVEL}] [${info.SPLAT}] ${info.message}`;
 });
 
 export const subLogger = (lblString?: string, fmtTimestamp?: string): Logger => {

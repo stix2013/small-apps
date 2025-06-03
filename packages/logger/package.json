@@ -4,11 +4,11 @@
   "version": "0.3.0",
   "author": "",
   "dependencies": {
+    "logform": "^2.7.0",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "@types/winston": "^2.4.4",
     "unbuild": "^3.5.0",
     "vitest": "3.2.0"
   },

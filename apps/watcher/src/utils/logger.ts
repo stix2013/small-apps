@@ -1,4 +1,4 @@
-import type { Logger} from '@yellow-mobile/logger';
+import type { WinstonLogger as Logger } from '@yellow-mobile/logger'
 import { subLogger } from '@yellow-mobile/logger'
 
 const logCdr = subLogger('CDR')
@@ -13,7 +13,7 @@ const defaultNames = {
   logSimInnSMS: 'SMS'
 }
 
-const loggers = new Map<string, Logger>()
+export const loggers = new Map<string, Logger>()
 
 export const logCdrFilename = (filename: string) => subLogger(`CDR ${filename}`)
 
