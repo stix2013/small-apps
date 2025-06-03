@@ -152,12 +152,6 @@ importers:
       vitest:
         specifier: 3.2.0
         version: 3.2.0(@types/node@22.15.29)(jiti@2.4.2)(tsx@4.19.4)
-      winston-slack-webhook-transport:
-        specifier: ^2.3.6
-        version: 2.3.6
-      winston-telegram:
-        specifier: ^2.7.0
-        version: 2.7.0(winston@3.17.0)
 
   packages/types:
     devDependencies:
@@ -2799,15 +2793,6 @@ packages:
     engines: {node: '>=8'}
     peerDependencies:
       winston: ^3
-
-  winston-slack-webhook-transport@2.3.6:
-    resolution: {integrity: sha512-h6nr/hfpuf0Dfd5sl1D9njo5hl9kUqv1VOpNQ40bKFdMWoYY73+Q/gIq8JUgciy8GHkvOKNQwGIFl9EYxR6vVA==}
-
-  winston-telegram@2.7.0:
-    resolution: {integrity: sha512-7boKnXP5Ma0GtsdxzCEqQdSt1RQfTASyL23Utc2zDc7JMPi1bl/xN8fLrRfSNPHDuepRrSMItmT928+t2ehc2A==}
-    engines: {node: '>= 14.0.0'}
-    peerDependencies:
-      winston: ^3.0.0
 
   winston-transport@4.9.0:
     resolution: {integrity: sha512-8drMJ4rkgaPo1Me4zD/3WLfI/zPdA9o2IipKODunnGDcuqbHwjsbB79ylv04LCGGzU0xQ6vTznOMpQGaLhhm6A==}
@@ -5658,18 +5643,6 @@ snapshots:
       file-stream-rotator: 0.6.1
       object-hash: 3.0.0
       triple-beam: 1.4.1
-      winston: 3.17.0
-      winston-transport: 4.9.0
-
-  winston-slack-webhook-transport@2.3.6:
-    dependencies:
-      axios: 1.9.0
-      winston-transport: 4.9.0
-    transitivePeerDependencies:
-      - debug
-
-  winston-telegram@2.7.0(winston@3.17.0):
-    dependencies:
       winston: 3.17.0
       winston-transport: 4.9.0
 

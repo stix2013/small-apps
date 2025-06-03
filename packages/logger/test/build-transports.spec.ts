@@ -90,19 +90,18 @@ vi.mock('winston', async (importOriginal) => {
 
 describe('buildTransports', () => {
   const defaultConfig: LoggerConfig = {
-    appName: 'test-app',
-    logTimeFormat: 'YYYY-MM-DD HH:mm:ss',
-    logDailyFrequency: '24h',
-    logDailyZip: 'yes',
-    logDailyFormat: 'YYYYMMDD',
-    logDailyPath: '/tmp/logs',
-    logFilenameCombine: '/tmp/logs/combine.log',
-    logFilenameError: '/tmp/logs/error.log',
-    logFilenameException: '/tmp/logs/exception.log',
-    logFilenameInfo: '/tmp/logs/info.log',
-    logMaxSize: '20m',
-    logMaxFiles: '14d',
-    transports: [],
+    APP_NAME: 'test-app',
+    TIMESTAMP_FORMAT: 'YYYY-MM-DD HH:mm:ss',
+    DAILY_FREQUENCY: '24h',
+    DAILY_ZIP: true,
+    DAILY_FORMAT: 'YYYYMMDD',
+    DAILY_PATH: '/tmp/logs',
+    FILE_COMBINE: '/tmp/logs/combine.log',
+    FILE_ERROR: '/tmp/logs/error.log',
+    FILE_EXCEPTION: '/tmp/logs/exception.log',
+    FILE_INFO: '/tmp/logs/info.log',
+    MAX_SIZE: '20m',
+    MAX_FILES: '14d',
   };
 
   let mockConsole: ReturnType<typeof vi.fn>;
@@ -135,9 +134,9 @@ describe('buildTransports', () => {
       mockCustomFormat,
       mockSplatFormat,
       mockMsFormat,
-      defaultConfig.logFilenameError,
-      defaultConfig.logFilenameInfo,
-      defaultConfig.logFilenameCombine,
+      defaultConfig.FILE_ERROR,
+      defaultConfig.FILE_INFO,
+      defaultConfig.FILE_COMBINE,
       mockDailyRotateFile as any,
     );
     // Expect Console + 3 new DRF instances + transportDaily itself added to list
