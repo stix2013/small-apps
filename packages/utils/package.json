@@ -18,6 +18,36 @@
         "default": "./dist/index.cjs"
       }
     },
+    "./colors": {
+      "import": {
+        "types": "./dist/colors.d.ts",
+        "default": "./dist/colors.mjs"
+      },
+      "require": {
+        "types": "./dist/colors.d.ts",
+        "default": "./dist/colors.cjs"
+      }
+    },
+    "./converters": {
+      "import": {
+        "types": "./dist/converters.d.ts",
+        "default": "./dist/converters.mjs"
+      },
+      "require": {
+        "types": "./dist/converters.d.ts",
+        "default": "./dist/converters.cjs"
+      }
+    },
+    "./coverage": {
+      "import": {
+        "types": "./dist/coverage.d.ts",
+        "default": "./dist/coverage.mjs"
+      },
+      "require": {
+        "types": "./dist/coverage.d.ts",
+        "default": "./dist/coverage.cjs"
+      }
+    },
     "./package.json": "./package.json",
     "./assets/currency-symbols.json": "./dist/assets/currency-symbols.json"
   },

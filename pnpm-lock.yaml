@@ -51,6 +51,9 @@ importers:
       '@yellow-mobile/logger':
         specifier: workspace:*
         version: link:../../packages/logger
+      '@yellow-mobile/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       axios:
         specifier: ^1.9.0
         version: 1.9.0

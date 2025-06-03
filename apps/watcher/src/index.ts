@@ -1,5 +1,7 @@
 // express
 import express from 'express'
+import { getCurrencySymbol } from '@yellow-mobile/utils';
+import { colorsOrange } from '@yellow-mobile/utils/colors';
 // schedule
 import schedule from 'node-schedule'
 
@@ -44,6 +46,8 @@ async function main() {
   })
 
   console.log(i18n.t('app.started'));
+  console.log('Testing utils: Currency for USD:', getCurrencySymbol('USD'));
+  console.log('Testing utils/colors: Orange color palette:', colorsOrange);
 }
 
 main().catch(error => {

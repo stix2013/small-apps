@@ -5,17 +5,17 @@ import { visualizer } from 'rollup-plugin-visualizer';
 export default defineBuildConfig({
   declaration: false,
   failOnWarn: false,
-  clean: true,
+  clean: false, // Explicitly set to false
   externals: [
     '@yellow-mobile/types'
   ],
   entries: [
     'src/index',
-    {
-      builder: 'copy',
-      input: 'src/locales',
-      outDir: 'dist/locales',
-    },
+    // {
+    //   builder: 'copy',
+    //   input: 'src/locales',
+    //   outDir: 'dist/locales',
+    // },
   ],
   rollup: {
     resolve: {
@@ -33,15 +33,16 @@ export default defineBuildConfig({
     '@src': path.resolve(__dirname, 'src'),
   },
   hooks: {
-    'rollup:options'(_ctx, options) {
-      options.plugins.push(
-        visualizer({
-          filename: 'dist/stats.html',
-          open: false,
-          gzipSize: true,
-          brotliSize: true,
-        })
-      );
-    },
+    // 'rollup:options'(_ctx, options) {
+    //   options.plugins.push(
+    //     visualizer({
+    //       filename: 'dist/stats.html',
+    //       open: false,
+    //       gzipSize: true,
+    //       brotliSize: true,
+    //       emitFile: true, // Added this based on documentation
+    //     })
+    //   );
+    // },
   },
 });

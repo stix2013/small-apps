@@ -6,10 +6,10 @@ export default defineBuildConfig([
     clean: true,
     externals: ['@yellow-mobile/const', '@yellow-mobile/types'],
     entries: [
-      'src/index.ts',
-      'src/colors/index.ts',
-      'src/converters/index.ts',
-      'src/coverage/index.ts',
+      { input: 'src/index', name: 'index' },
+      { input: 'src/colors/index', name: 'colors' },
+      { input: 'src/converters/index', name: 'converters' },
+      { input: 'src/coverage/index', name: 'coverage' },
       {
         builder: 'copy',
         input: 'src/assets/',
