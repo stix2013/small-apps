@@ -1,16 +1,18 @@
 {
-  "extends": ["../../tsconfig.base.json", "@tsconfig/node18/tsconfig.json"],
+  "extends": [
+    "@tsconfig/node18/tsconfig.json",
+    "../../tsconfig.base.json"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
-    "allowJs": true,
-    "noEmit": false,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "declaration": true,
-    "declarationMap": true,
     "outDir": "./dist"
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "test/**/*.spec.ts"
   ]
 }

@@ -2,10 +2,18 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "useDefineForClassFields": true,
-    "jsx": "preserve",
     "isolatedModules": true,
+    "moduleResolution": "bundler",
+    "module": "es2022",
+    "sourceMap": true,
+    "strict": true,
+    "noEmit": true,
     "types": [
-      "node"
+      "@types/node",
     ]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

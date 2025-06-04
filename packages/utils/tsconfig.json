@@ -1,9 +1,10 @@
 {
   "extends": [
+    "@tsconfig/node18/tsconfig.json",
     "../../tsconfig.base.json",
-    "@tsconfig/node18/tsconfig.json"
   ],
   "compilerOptions": {
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "outDir": "./dist"
   },
@@ -11,7 +12,7 @@
     "src"
   ],
   "exclude": [
-    "**/dist/**",
+    "dist",
     "node_modules",
     "test/**/*.spec.ts"
   ]

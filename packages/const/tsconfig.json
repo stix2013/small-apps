@@ -1,5 +1,8 @@
 {
-  "extends": ["../../tsconfig.base.json", "@tsconfig/node18/tsconfig.json"],
+  "extends": [
+    "@tsconfig/node18/tsconfig.json",
+    "../../tsconfig.base.json",
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "allowJs": true,
@@ -12,5 +15,9 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
   ]
 }

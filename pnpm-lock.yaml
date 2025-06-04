@@ -139,6 +139,9 @@ importers:
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
     devDependencies:
       '@tsconfig/node18':
         specifier: ^18.2.4

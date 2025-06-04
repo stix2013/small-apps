@@ -9,8 +9,5 @@
       "@yellow-mobile/config": ["packages/config/src"],
       "@yellow-mobile/config/*": ["packages/config/src/*"]
     }
-  },
-  "exclude": [
-    "**/dist/**"
-  ]
+  }
 }
