@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "winston": "^3.17.0",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "pathe": "^2.0.3"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
