@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import path from 'path';
+import path from 'pathe';
 
 export interface LoggerConfig {
   APP_NAME: string;

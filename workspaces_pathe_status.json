@@ -1,0 +1,8 @@
+{
+  "apps/watcher": true,
+  "packages/config": true,
+  "packages/const": false,
+  "packages/logger": true,
+  "packages/types": false,
+  "packages/utils": false
+}

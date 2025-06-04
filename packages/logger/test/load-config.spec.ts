@@ -1,5 +1,5 @@
 import { loadConfig, LoggerConfig } from '../src/load-config';
-import path from 'path';
+import path from 'pathe';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as dotenv from 'dotenv';
 
