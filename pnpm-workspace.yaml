@@ -4,4 +4,5 @@ packages:
   - packages/*/example
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - '@tailwindcss/oxide'
   - esbuild
