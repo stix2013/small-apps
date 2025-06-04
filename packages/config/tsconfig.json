@@ -7,9 +7,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "./dist",
+    "types": ["vitest/globals", "@types/node"]
   },
   "include": [
-    "src"
+    "src/**/*.ts",
+    "src/**/*.test.ts",
+    "test/**/*.test.ts"
   ],
   "exclude": [
     "dist",
