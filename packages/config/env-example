@@ -1,0 +1,15 @@
+APP_NAME='WATCHER'
+APP_LANGUAGE='en'
+
+# logger
+LOG_TIME_FORMAT='YYYY-MM-DD HH:mm:ss'
+LOG_FILENAME_COMBINE='/app/packages/logger/logs/combine.log'
+LOG_FILENAME_INFO='/app/packages/logger/logs/info.log'
+LOG_FILENAME_ERROR='/app/packages/logger/logs/error.log'
+LOG_FILENAME_EXCEPTION='/app/packages/logger/logs/exception.log'
+LOG_DAILY_FREQUENCY='15m'
+LOG_DAILY_ZIP='yes'
+LOG_DAILY_FORMAT='YYYYMMDDHH'
+LOG_DAILY_PATH='/app/packages/logger/logs/dayly'
+LOG_MAX_SIZE='20m'
+LOG_MAX_FILES='14d'
