@@ -8,3 +8,5 @@ Before you begin, ensure you have the following installed:
 
 *   Node.js (>=18)
 *   pnpm (>=8)
+*   nuxt 4 alpha
+
