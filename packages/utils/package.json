@@ -4,6 +4,7 @@
   "version": "0.3.0",
   "author": "",
   "engine-strict": true,
+  "type": "module",
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
@@ -77,6 +78,7 @@
     "consola": "^3.4.0"
   },
   "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
     "@yellow-mobile/types": "workspace:*",
     "currency-symbol-map": "^5.1.0",
     "unbuild": "^3.5.0",

@@ -1,17 +1,18 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": [
+    "../../tsconfig.base.json",
+    "@tsconfig/node18/tsconfig.json"],
   "compilerOptions": {
     "types": [
       "node"
     ],
+    "baseUrl": ".",
     "paths": {
       "@yellow-mobile/config": ["packages/config/src"],
       "@yellow-mobile/config/*": ["packages/config/src/*"]
     }
   },
   "exclude": [
-    "**/dist/**",
-    "**/.nuxt/**",
-    "**/nuxt.d.ts"
+    "**/dist/**"
   ]
 }

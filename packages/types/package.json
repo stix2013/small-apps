@@ -30,6 +30,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
     "unbuild": "^3.5.0"
   }
 }

@@ -5,6 +5,7 @@
   "author": "",
   "type": "module",
   "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
     "typescript": "^5.8.3",
     "unbuild": "^3.5.0"
   },

@@ -13,6 +13,7 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
     "unbuild": "^3.5.0",
     "vitest": "3.2.0"
   },

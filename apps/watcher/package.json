@@ -26,6 +26,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.24",
     "@types/node-schedule": "^2.1.7",

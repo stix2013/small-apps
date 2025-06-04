@@ -18,6 +18,9 @@ importers:
       '@eslint/js':
         specifier: 9.28.0
         version: 9.28.0
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
       '@types/node':
         specifier: ^22.15.26
         version: 22.15.29
@@ -50,10 +53,10 @@ importers:
         version: link:../../packages/const
       '@yellow-mobile/logger':
         specifier: workspace:*
-        version: link:../../packages/logger
+        version: file:packages/logger(dotenv@16.5.0)
       '@yellow-mobile/utils':
         specifier: workspace:*
-        version: link:../../packages/utils
+        version: file:packages/utils(consola@3.4.2)
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -88,6 +91,9 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
     devDependencies:
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
       '@types/express':
         specifier: ^5.0.2
         version: 5.0.2
@@ -128,8 +134,30 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(@types/node@22.15.29)(jiti@2.4.2)(tsx@4.19.4)
 
+  packages/config:
+    dependencies:
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
+    devDependencies:
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
+      '@yellow-mobile/types':
+        specifier: workspace:*
+        version: link:../types
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.3
+      unbuild:
+        specifier: ^3.5.0
+        version: 3.5.0(typescript@5.8.3)
+
   packages/const:
     devDependencies:
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -149,6 +177,9 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(winston@3.17.0)
     devDependencies:
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
       unbuild:
         specifier: ^3.5.0
         version: 3.5.0(typescript@5.8.3)
@@ -158,6 +189,9 @@ importers:
 
   packages/types:
     devDependencies:
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
       unbuild:
         specifier: ^3.5.0
         version: 3.5.0(typescript@5.8.3)
@@ -171,6 +205,9 @@ importers:
         specifier: ^3.4.0
         version: 3.4.2
     devDependencies:
+      '@tsconfig/node18':
+        specifier: ^18.2.4
+        version: 18.2.4
       '@yellow-mobile/types':
         specifier: workspace:*
         version: link:../types
@@ -617,6 +654,9 @@ packages:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
 
+  '@tsconfig/node18@18.2.4':
+    resolution: {integrity: sha512-5xxU8vVs9/FNcvm3gE07fPbn9tl6tqGGWA9tSlwsUEkBxtRnTsNmwrV8gasZ9F/EobaSv9+nu8AxUKccw77JpQ==}
+
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
 
@@ -779,6 +819,22 @@ packages:
 
   '@vitest/utils@3.2.0':
     resolution: {integrity: sha512-gXXOe7Fj6toCsZKVQouTRLJftJwmvbhH5lKOBR6rlP950zUq9AitTUjnFoXS/CqjBC2aoejAztLPzzuva++XBw==}
+
+  '@yellow-mobile/const@file:packages/const':
+    resolution: {directory: packages/const, type: directory}
+    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
+
+  '@yellow-mobile/logger@file:packages/logger':
+    resolution: {directory: packages/logger, type: directory}
+    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
+    peerDependencies:
+      dotenv: ^16.5.0
+
+  '@yellow-mobile/utils@file:packages/utils':
+    resolution: {directory: packages/utils, type: directory}
+    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
+    peerDependencies:
+      consola: ^3.4.0
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -3147,6 +3203,8 @@ snapshots:
 
   '@trysound/sax@0.2.0': {}
 
+  '@tsconfig/node18@18.2.4': {}
+
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
@@ -3366,6 +3424,19 @@ snapshots:
       '@vitest/pretty-format': 3.2.0
       loupe: 3.1.3
       tinyrainbow: 2.0.0
+
+  '@yellow-mobile/const@file:packages/const': {}
+
+  '@yellow-mobile/logger@file:packages/logger(dotenv@16.5.0)':
+    dependencies:
+      dotenv: 16.5.0
+      winston: 3.17.0
+      winston-daily-rotate-file: 5.0.0(winston@3.17.0)
+
+  '@yellow-mobile/utils@file:packages/utils(consola@3.4.2)':
+    dependencies:
+      '@yellow-mobile/const': file:packages/const
+      consola: 3.4.2
 
   accepts@2.0.0:
     dependencies:
