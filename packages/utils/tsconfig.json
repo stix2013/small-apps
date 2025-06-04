@@ -1,5 +1,5 @@
 {
-  "extends":[
+  "extends": [
     "../../tsconfig.base.json",
     "@tsconfig/node18/tsconfig.json"
   ],
@@ -14,5 +14,5 @@
     "**/dist/**",
     "node_modules",
     "test/**/*.spec.ts"
-  ],
+  ]
 }

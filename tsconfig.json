@@ -1,11 +1,9 @@
 {
   "extends": [
-    "../../tsconfig.base.json",
-    "@tsconfig/node18/tsconfig.json"],
+    "./tsconfig.base.json",
+    "@tsconfig/node18/tsconfig.json"
+  ],
   "compilerOptions": {
-    "types": [
-      "node"
-    ],
     "baseUrl": ".",
     "paths": {
       "@yellow-mobile/config": ["packages/config/src"],

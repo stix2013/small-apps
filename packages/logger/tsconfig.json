@@ -1,23 +1,11 @@
 {
+  "extends": ["../../tsconfig.base.json", "@tsconfig/node18/tsconfig.json"],
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ESNext",
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
     "noEmit": false,
-    "esModuleInterop": true,
-    "module": "node18",
-    "moduleResolution": "node16",
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "isolatedModules": true,
-    "jsx": "preserve",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist"
