@@ -53,10 +53,10 @@ importers:
         version: link:../../packages/const
       '@yellow-mobile/logger':
         specifier: workspace:*
-        version: file:packages/logger(dotenv@16.5.0)
+        version: link:../../packages/logger
       '@yellow-mobile/utils':
         specifier: workspace:*
-        version: file:packages/utils(consola@3.4.2)
+        version: link:../../packages/utils
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -819,22 +819,6 @@ packages:
 
   '@vitest/utils@3.2.0':
     resolution: {integrity: sha512-gXXOe7Fj6toCsZKVQouTRLJftJwmvbhH5lKOBR6rlP950zUq9AitTUjnFoXS/CqjBC2aoejAztLPzzuva++XBw==}
-
-  '@yellow-mobile/const@file:packages/const':
-    resolution: {directory: packages/const, type: directory}
-    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
-
-  '@yellow-mobile/logger@file:packages/logger':
-    resolution: {directory: packages/logger, type: directory}
-    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
-    peerDependencies:
-      dotenv: ^16.5.0
-
-  '@yellow-mobile/utils@file:packages/utils':
-    resolution: {directory: packages/utils, type: directory}
-    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
-    peerDependencies:
-      consola: ^3.4.0
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -3424,19 +3408,6 @@ snapshots:
       '@vitest/pretty-format': 3.2.0
       loupe: 3.1.3
       tinyrainbow: 2.0.0
-
-  '@yellow-mobile/const@file:packages/const': {}
-
-  '@yellow-mobile/logger@file:packages/logger(dotenv@16.5.0)':
-    dependencies:
-      dotenv: 16.5.0
-      winston: 3.17.0
-      winston-daily-rotate-file: 5.0.0(winston@3.17.0)
-
-  '@yellow-mobile/utils@file:packages/utils(consola@3.4.2)':
-    dependencies:
-      '@yellow-mobile/const': file:packages/const
-      consola: 3.4.2
 
   accepts@2.0.0:
     dependencies:
