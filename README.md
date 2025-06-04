@@ -16,6 +16,7 @@ This monorepo is organized into two main directories:
 ### Packages
 
 *   **`@yellow-mobile/const`**: Provides constant values used across the monorepo.
+*   **`@yellow-mobile/config`**: Provides configuration management for applications.
 *   **`@yellow-mobile/logger`**: Provides logging functionality using Winston.
 *   **`@yellow-mobile/types`**: Defines TypeScript types used throughout the project.
 *   **`@yellow-mobile/utils`**: Offers various utility functions.
