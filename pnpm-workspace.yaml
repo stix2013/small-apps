@@ -3,4 +3,5 @@ packages:
   - packages/*
   - packages/*/example
 onlyBuiltDependencies:
+  - '@parcel/watcher'
   - esbuild
