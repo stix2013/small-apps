@@ -1,5 +1,5 @@
 {
-  "extends": ["../../tsconfig.base.json", "@tsconfig/node18/tsconfig.json"],
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "removeComments": true,
     "declaration": false,
