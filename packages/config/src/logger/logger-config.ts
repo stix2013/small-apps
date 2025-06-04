@@ -18,7 +18,7 @@ export function loadConfig(): LoggerConfig {
   );
 
   const dailyPath = process.env.LOG_DAILY_PATH || logDir;
-  const dailyFilename = `${dailyPath}/${appName.toLowerCase()}-%DATE%.log`;
+  const dailyFilename = `${path.resolve(dailyPath, appName.toLowerCase())}-%DATE%.log`;
   const formatDaily = process.env.LOG_DAILY_FORMAT || 'YYYYMMDD-HH';
 
   const formatTimestamp = process.env.LOG_TIME_FORMAT || 'YYYY-MM-DD HH:mm:ss';

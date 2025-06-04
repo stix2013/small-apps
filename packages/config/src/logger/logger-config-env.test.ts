@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'; // Removed afterAll
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'; // Removed afterAll
 import path from 'pathe';
 // loadConfig will be imported dynamically in tests
 
@@ -24,19 +24,19 @@ describe('loadConfig', () => {
       const config = loadConfigFresh();
 
       expect(config.appName).toBe('TestAppForConfig');
-      expect(config.logDir).toBe('./test_logs');
-      expect(config.dailyFrequency).toBe('YYYY-MM-DD');
+      expect(config.logDir).toBe(path.resolve(__dirname, 'logs'));
+      expect(config.dailyFrequency).toBe('15m');
       expect(config.dailyZip).toBe(true);
-      expect(config.formatTimestamp).toBe('HH:mm:ss');
-      expect(config.fileInfo).toBe('info-test.log');
-      expect(config.maxSize).toBe('10m');
-      expect(config.maxFiles).toBe('5d');
-      expect(config.dailyPath).toBe('./test_logs/daily');
-      expect(config.dailyFilename).toBe('./test_logs/daily/testappforconfig-%DATE%.log');
-      expect(config.formatDaily).toBe('YYYY-MM-DD_HH');
-      expect(config.fileCombine).toBe('combine-test.log');
-      expect(config.fileError).toBe('error-test.log');
-      expect(config.fileException).toBe('exception-test.log');
+      expect(config.formatTimestamp).toBe('YYYY-MM-DD HH:mm:ss');
+      expect(config.fileInfo).toBe('/app/packages/config/logs/info.log');
+      expect(config.fileCombine).toBe('/app/packages/config/logs/combine.log');
+      expect(config.fileError).toBe('/app/packages/config/logs/error.log');
+      expect(config.fileException).toBe('/app/packages/config/logs/exception.log');
+      expect(config.maxSize).toBe('20m');
+      expect(config.maxFiles).toBe('14d');
+      expect(config.dailyPath).toBe('/app/packages/config/logs/dayly');
+      expect(config.dailyFilename).toBe('/app/packages/config/logs/dayly/testappforconfig-%DATE%.log');
+      expect(config.formatDaily).toBe('YYYYMMDDHH');
     });
   });
 
