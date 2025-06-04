@@ -1,21 +1,18 @@
-import i18n from '@src/i18n'; // Adjust path as necessary
+import i18n, { initializeI18n } from '@src/i18n'; // Adjust path as necessary, import initializeI18n
 
 // Initialize i18next and load namespaces before tests run
 beforeAll(async () => {
   // Ensure that i18next is initialized before tests run
-  // The init method is asynchronous, so we need to wait for it to complete.
   if (!i18n.isInitialized) {
-    // We need to wait for i18next to be initialized.
-    // The initialization happens in i18n.ts, but it's async.
-    // A common way to handle this is to listen for the 'initialized' event.
-    await new Promise((resolve) => {
-      i18n.on('initialized', resolve);
-      // If it's already initialized by the time we set the listener, resolve immediately.
-      if (i18n.isInitialized) resolve(true);
-    });
+    // Call initializeI18n directly and wait for it to complete.
+    // This is more reliable than listening for the 'initialized' event
+    // if initializeI18n itself returns a promise that resolves on completion.
+    await initializeI18n();
   }
+  // It's good practice to ensure the desired language is loaded,
+  // especially if tests depend on specific translations.
   await i18n.changeLanguage('en'); // Ensure English is loaded
-});
+}, 15000); // Increased timeout for beforeAll
 
 describe('i18n', () => {
   it('should load translations correctly', () => {

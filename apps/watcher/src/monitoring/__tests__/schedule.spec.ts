@@ -15,10 +15,12 @@ vi.mock('node-schedule', async (importOriginal) => {
   return {
     ...actual, // Spread actual to keep other parts of the module intact if needed
     scheduleJob: vi.fn(),
-    gracefulShutdown: vi.fn().mockResolvedValue(undefined), // Ensure gracefulShutdown is also mocked if used
-    // default export if the original module uses it (based on previous mock structure)
+    gracefulShutdown: vi.fn().mockResolvedValue(undefined),
+    // For `import schedule from 'node-schedule'` (default import)
+    // The default export should also contain all named exports if accessed via default.NamedExport
     default: {
-      scheduleJob: vi.fn(),
+      ...actual, // Spread all actual exports (like RecurrenceRule) onto the default mock
+      scheduleJob: vi.fn(), // Mock specific functions on the default export
       gracefulShutdown: vi.fn().mockResolvedValue(undefined),
     }
   };
@@ -130,15 +132,15 @@ describe('createSchedule', () => {
     // Capture the callbacks
     // The callback is the 3rd argument (index 2) to schedule.scheduleJob
     const apiJobCall = mockScheduleJob.mock.calls.find(call => call[0] === 'SIMINN-API');
-    if (apiJobCall && typeof apiJobCall[1] === 'function') {
-      jobAPICallback = apiJobCall[1] as () => Promise<void>;
+    if (apiJobCall && typeof apiJobCall[2] === 'function') {
+      jobAPICallback = apiJobCall[2] as () => Promise<void>;
     } else {
       throw new Error("API Job callback (for 'SIMINN-API') not captured or not a function.");
     }
 
     const smsJobCall = mockScheduleJob.mock.calls.find(call => call[0] === 'SIMINN-SMS');
-    if (smsJobCall && typeof smsJobCall[1] === 'function') {
-      jobSMSCallback = smsJobCall[1] as () => Promise<void>;
+    if (smsJobCall && typeof smsJobCall[2] === 'function') {
+      jobSMSCallback = smsJobCall[2] as () => Promise<void>;
     } else {
       throw new Error("SMS Job callback (for 'SIMINN-SMS') not captured or not a function.");
     }
@@ -170,7 +172,7 @@ describe('createSchedule', () => {
       expect(simInnApi.get).toHaveBeenCalledWith(config.simInnApiPathPing);
       expect(gaugeSimInnApi.labels).toHaveBeenCalledWith({ status: 'Not Found' });
       expect(gaugeSimInnApi.set).toHaveBeenCalledWith(404);
-      expect(vi.mocked(createLoggers)().get('API')?.error).toHaveBeenCalledWith(axiosError.message);
+      expect(vi.mocked(createLoggers)().get('API')?.error).toHaveBeenCalledWith(`Axios error: ${axiosError.message}`);
     });
 
     it('should handle non-Axios error during API call', async () => {
@@ -182,7 +184,7 @@ describe('createSchedule', () => {
       expect(simInnApi.get).toHaveBeenCalledWith(config.simInnApiPathPing);
       expect(gaugeSimInnApi.labels).toHaveBeenCalledWith({ status: 'Error' });
       expect(gaugeSimInnApi.set).toHaveBeenCalledWith(0);
-      expect(vi.mocked(createLoggers)().get('API')?.error).toHaveBeenCalledWith(genericError.message);
+      expect(vi.mocked(createLoggers)().get('API')?.error).toHaveBeenCalledWith(`Generic error: ${genericError.message}`);
     });
   });
 
@@ -208,7 +210,7 @@ describe('createSchedule', () => {
       expect(simInnSMS.get).toHaveBeenCalledWith(config.simInnSMSHealthcheck);
       expect(gaugeSimInnSMS.labels).toHaveBeenCalledWith({ status: 'Error' });
       expect(gaugeSimInnSMS.set).toHaveBeenCalledWith(0); // 0 for error
-      expect(vi.mocked(createLoggers)().get('SMS')?.error).toHaveBeenCalledWith(smsError.message);
+      expect(vi.mocked(createLoggers)().get('SMS')?.error).toHaveBeenCalledWith(`Generic error during SMS healthcheck: ${smsError.message}`);
     });
   });
 });
